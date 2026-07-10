@@ -1,0 +1,166 @@
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
+
+/* -------------------------------
+   Hide Images
+-------------------------------- */
+
+.accessibility-hide-images img,
+.accessibility-hide-images picture,
+.accessibility-hide-images svg,
+.accessibility-hide-images video,
+.accessibility-hide-images canvas,
+.accessibility-hide-images iframe {
+  display: none !important;
+}
+
+/* -------------------------------
+   High Contrast
+-------------------------------- */
+
+.accessibility-high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.accessibility-high-contrast * {
+  background: transparent !important;
+  color: #fff !important;
+  border-color: #ffffff55 !important;
+}
+
+.accessibility-high-contrast a {
+  color: #00d4ff !important;
+}
+
+.accessibility-high-contrast .btn-primary {
+  background: #0057ff !important;
+  color: #fff !important;
+}
+
+.accessibility-high-contrast input,
+.accessibility-high-contrast textarea,
+.accessibility-high-contrast select {
+  background: #111 !important;
+  color: #fff !important;
+}
+
+.accessibility-high-contrast .card,
+.accessibility-high-contrast .navbar,
+.accessibility-high-contrast header,
+.accessibility-high-contrast footer,
+.accessibility-high-contrast section {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* -------------------------------
+   Smooth Font Resize
+-------------------------------- */
+
+html {
+  transition: font-size 0.25s ease;
+}
+
+
+
+/* -------------------------------
+   Scrollbar
+-------------------------------- */
+
+.accessibility-high-contrast ::-webkit-scrollbar {
+  width: 10px;
+}
+
+.accessibility-high-contrast
+::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.accessibility-high-contrast
+::-webkit-scrollbar-thumb {
+  background: #777;
+}
+
+.accessibility-high-contrast
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* -------------------------------
+   Focus Ring
+-------------------------------- */
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* -------------------------------
+   Selection
+-------------------------------- */
+
+::selection {
+  background: #2563eb;
+  color: white;
+}
+
+/* -------------------------------
+   Better Reading
+-------------------------------- */
+
+body {
+  line-height: 1.7;
+  letter-spacing: .02em;
+}
+
+/* -------------------------------
+   Text Only Mode
+-------------------------------- */
+
+.accessibility-hide-images figure,
+.accessibility-hide-images .image,
+.accessibility-hide-images .gallery,
+.accessibility-hide-images .hero-image {
+  display: none !important;
+}
+
+/* -------------------------------
+   Tables
+-------------------------------- */
+
+.accessibility-high-contrast table,
+.accessibility-high-contrast th,
+.accessibility-high-contrast td {
+  border: 1px solid #fff;
+}
+
+/* -------------------------------
+   Links
+-------------------------------- */
+
+.accessibility-high-contrast a:hover {
+  text-decoration: underline;
+}
+
+/* -------------------------------
+   Disabled Animation
+-------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+}
+
+
