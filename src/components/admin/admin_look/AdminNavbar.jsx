@@ -2,8 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
-  LogOut,
-  Bell,
   Menu,
   X,
   ArrowLeft,
@@ -128,8 +126,8 @@ const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
         aria-expanded={isOpen}
         className={`
           h-10 px-2.5
-          flex items-center gap-1
-          text-[13px] font-semibold tracking-wide rounded-lg
+          flex items-center gap-1 shrink-0
+          text-[13px] font-semibold tracking-wide whitespace-nowrap rounded-lg
           transition-colors duration-200
           hover:text-primary
           ${isOpen || active ? "text-primary" : "text-base-content/75"}
@@ -228,34 +226,43 @@ export default function AdminNavbar() {
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation"
-              className="xl:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
+              className="2xl:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
             >
               <Menu size={20} />
             </button>
 
-            <h1 className="font-serif text-lg sm:text-xl font-black text-primary tracking-tight whitespace-nowrap">
-              TIH ERP
-            </h1>
-
+            {/*
+              Ten top-level items (8 dropdown groups + 2 direct links) need
+              real room — even at `xl` (1280px) they don't fit next to the
+              brand and the right-side account cluster, which was causing
+              each item to flex-shrink and its label to wrap across
+              multiple lines, colliding with the buttons on the right.
+              The full horizontal nav is now reserved for `2xl` (1536px)
+              and up; everything below that uses the mobile/tablet drawer,
+              which already contains every section. `whitespace-nowrap` +
+              `shrink-0` on each item is a safety net so that even at the
+              edge of `2xl`, items scroll horizontally instead of wrapping.
+            */}
             <nav
               aria-label="Admin navigation"
-              className="hidden xl:flex items-center gap-0.5"
+              className="hidden 2xl:flex items-center gap-0.5"
             >
               {NAV_ITEMS.map(({ key, label, items }) => (
-                <Dropdown
-                  key={key}
-                  title={label}
-                  menuKey={key}
-                  open={open}
-                  setOpen={setOpen}
-                  active={isGroupActive(items)}
-                >
-                  {items.map(({ to, label: itemLabel }) => (
-                    <MenuItem key={to} to={to}>
-                      {itemLabel}
-                    </MenuItem>
-                  ))}
-                </Dropdown>
+                <div key={key} className="shrink-0">
+                  <Dropdown
+                    title={label}
+                    menuKey={key}
+                    open={open}
+                    setOpen={setOpen}
+                    active={isGroupActive(items)}
+                  >
+                    {items.map(({ to, label: itemLabel }) => (
+                      <MenuItem key={to} to={to}>
+                        {itemLabel}
+                      </MenuItem>
+                    ))}
+                  </Dropdown>
+                </div>
               ))}
 
               {DIRECT_LINKS.map(({ to, label }) => (
@@ -263,8 +270,8 @@ export default function AdminNavbar() {
                   key={to}
                   to={to}
                   className={`
-                    h-10 px-3 rounded-lg flex items-center
-                    text-[13px] font-semibold
+                    h-10 px-3 rounded-lg flex items-center shrink-0
+                    text-[13px] font-semibold whitespace-nowrap
                     transition-colors duration-200
                     ${location.pathname.startsWith(to)
                       ? "text-primary"
@@ -277,11 +284,8 @@ export default function AdminNavbar() {
             </nav>
           </div>
 
-          {/* Right cluster — account actions, always visible */}
+          {/* Right cluster */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-
-            <div className="hidden sm:block w-px h-6 bg-base-300 mx-1" aria-hidden="true" />
-
             <button
               onClick={handleBackToProfile}
               className="
@@ -304,7 +308,7 @@ export default function AdminNavbar() {
       {/* MOBILE / TABLET DRAWER */}
       <div
         className={`
-          fixed inset-0 z-[60] xl:hidden overflow-hidden
+          fixed inset-0 z-[60] 2xl:hidden overflow-hidden
           transition-all duration-200
           ${mobileOpen ? "visible opacity-100" : "invisible opacity-0"}
         `}
