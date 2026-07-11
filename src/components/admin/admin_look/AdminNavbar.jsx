@@ -1,6 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut, Bell, Menu, X, ArrowLeft } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Bell,
+  Menu,
+  X,
+  ArrowLeft,
+} from "lucide-react";
 
 /* ==========================================
    NAV CONFIG — single source of truth
@@ -107,7 +114,7 @@ const AUTH_KEYS = ["token", "user"];
    DESKTOP DROPDOWN
 ========================================== */
 
-const Dropdown = ({ title, menuKey, open, setOpen, children }) => {
+const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
   const isOpen = open === menuKey;
 
   return (
@@ -125,7 +132,7 @@ const Dropdown = ({ title, menuKey, open, setOpen, children }) => {
           text-[13px] font-semibold tracking-wide rounded-lg
           transition-colors duration-200
           hover:text-primary
-          ${isOpen ? "text-primary" : "text-base-content/75"}
+          ${isOpen || active ? "text-primary" : "text-base-content/75"}
         `}
       >
         {title}
@@ -142,7 +149,7 @@ const Dropdown = ({ title, menuKey, open, setOpen, children }) => {
       <div
         role="menu"
         className={`
-          absolute left-0 top-full pt-2 z-9999
+          absolute left-0 top-full pt-2 z-[70]
           transition-all duration-200
           ${isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}
         `}
@@ -208,28 +215,22 @@ export default function AdminNavbar() {
     navigate("/admin/profile");
   }, [navigate]);
 
+  const isGroupActive = (items) =>
+    items.some((item) => location.pathname.startsWith(item.to));
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300">
-        <div className="flex items-center justify-between px-4 sm:px-6 h-16">
+        <div className="flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
 
-          {/* Left Side */}
-          <div className="flex items-center gap-3 sm:gap-8 min-w-0">
+          {/* Left cluster — menu, brand, primary nav */}
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation"
               className="xl:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
             >
               <Menu size={20} />
-            </button>
-
-            <button
-              onClick={handleBackToProfile}
-              aria-label="Back to profile"
-              title="Back to profile"
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-base-content/75 hover:bg-base-200 hover:text-primary transition-colors duration-200 shrink-0"
-            >
-              <ArrowLeft size={20} />
             </button>
 
             <h1 className="font-serif text-lg sm:text-xl font-black text-primary tracking-tight whitespace-nowrap">
@@ -241,7 +242,14 @@ export default function AdminNavbar() {
               className="hidden xl:flex items-center gap-0.5"
             >
               {NAV_ITEMS.map(({ key, label, items }) => (
-                <Dropdown key={key} title={label} menuKey={key} open={open} setOpen={setOpen}>
+                <Dropdown
+                  key={key}
+                  title={label}
+                  menuKey={key}
+                  open={open}
+                  setOpen={setOpen}
+                  active={isGroupActive(items)}
+                >
                   {items.map(({ to, label: itemLabel }) => (
                     <MenuItem key={to} to={to}>
                       {itemLabel}
@@ -254,12 +262,62 @@ export default function AdminNavbar() {
                 <Link
                   key={to}
                   to={to}
-                  className="h-10 px-3 rounded-lg flex items-center text-[13px] font-semibold text-base-content/75 hover:bg-base-200 hover:text-primary transition-colors duration-200"
+                  className={`
+                    h-10 px-3 rounded-lg flex items-center
+                    text-[13px] font-semibold
+                    transition-colors duration-200
+                    ${location.pathname.startsWith(to)
+                      ? "text-primary"
+                      : "text-base-content/75 hover:bg-base-200 hover:text-primary"}
+                  `}
                 >
                   {label}
                 </Link>
               ))}
             </nav>
+          </div>
+
+          {/* Right cluster — account actions, always visible */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="w-9 h-9 rounded-lg hidden sm:flex items-center justify-center text-base-content/60 hover:bg-base-200 hover:text-primary transition-colors duration-200"
+            >
+              <Bell size={18} />
+            </button>
+
+            <div className="hidden sm:block w-px h-6 bg-base-300 mx-1" aria-hidden="true" />
+
+            <button
+              onClick={handleBackToProfile}
+              className="
+                h-9 pl-3 pr-3.5 rounded-full
+                flex items-center gap-1.5
+                border border-base-300
+                text-[12.5px] font-semibold text-base-content/70
+                hover:border-primary/40 hover:text-primary hover:bg-primary/5
+                transition-colors duration-200
+              "
+            >
+              <ArrowLeft size={14} />
+              <span className="hidden sm:inline">Back to Profile</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              aria-label="Log out"
+              title="Log out"
+              className="
+                w-9 h-9 rounded-full
+                flex items-center justify-center
+                text-base-content/60
+                hover:bg-error/10 hover:text-error
+                transition-colors duration-200
+              "
+            >
+              <LogOut size={17} />
+            </button>
           </div>
 
         </div>
@@ -268,7 +326,7 @@ export default function AdminNavbar() {
       {/* MOBILE / TABLET DRAWER */}
       <div
         className={`
-          fixed inset-0 z-60 xl:hidden overflow-hidden
+          fixed inset-0 z-[60] xl:hidden overflow-hidden
           transition-all duration-200
           ${mobileOpen ? "visible opacity-100" : "invisible opacity-0"}
         `}
@@ -332,6 +390,25 @@ export default function AdminNavbar() {
                 {label}
               </MenuItem>
             ))}
+
+            <div className="mt-2 pt-4 border-t border-base-300">
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  handleLogout();
+                }}
+                className="
+                  w-full flex items-center gap-2
+                  px-4 py-2.5 rounded-xl
+                  text-[13.5px] font-medium text-error
+                  hover:bg-error/8
+                  transition-all duration-200
+                "
+              >
+                <LogOut size={15} />
+                Log out
+              </button>
+            </div>
           </nav>
         </div>
       </div>

@@ -83,58 +83,87 @@ setSubjects(res.data.data.subjects || []);
   // LOAD STUDENTS
   // ==========================================
 
-  const loadStudents =
-    async (
-      stream,
-      semester
-    ) => {
+//   const loadStudents =
+//     async (
+//       stream,
+//       semester
+//     ) => {
 
-      try {
+//       try {
 
-        setLoading(true);
+//         setLoading(true);
 
-        const res = await api.get(
-  `/attendance/students?stream=${stream}&semester=${semester}`
-);
+//         const res = await api.get(
+//   `/attendance/students?stream=${stream}&semester=${semester}`
+// );
 
-const studentList =
-  res.data.data.students || [];
+// const studentList =
+//   res.data.data.students || [];
 
-        setStudents(
-          studentList
-        );
+//         setStudents(
+//           studentList
+//         );
 
-        // default present
+//         // default present
 
-        const attendance =
-          studentList.map(
-            (
-              student
-            ) => ({
-              studentId:
-                student._id,
-              status:
-                "Present",
-            })
-          );
+//         const attendance =
+//           studentList.map(
+//             (
+//               student
+//             ) => ({
+//               studentId:
+//                 student._id,
+//               status:
+//                 "Present",
+//             })
+//           );
 
-        setAttendanceData(
-          attendance
-        );
+//         setAttendanceData(
+//           attendance
+//         );
 
-      } catch (error) {
+//       } catch (error) {
 
-        console.error(
-          error
-        );
+//         console.error(
+//           error
+//         );
 
-      } finally {
+//       } finally {
 
-        setLoading(false);
+//         setLoading(false);
 
-      }
-    };
+//       }
+//     };
 
+// Frontend: surface real errors instead of failing silently
+const loadStudents = async (stream, semester) => {
+  try {
+    setLoading(true);
+
+    const res = await api.get(
+      `/attendance/students?stream=${stream}&semester=${semester}`
+    );
+
+    console.log("Load Students Response:", res.data); // TEMP: check this in console
+
+    const studentList = res.data.data.students || [];
+    setStudents(studentList);
+
+    setAttendanceData(
+      studentList.map((student) => ({
+        studentId: student._id,
+        status: "Present",
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+    alert(
+      error?.response?.data?.message || "Failed to load students"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
   // ==========================================
   // INITIAL LOAD
   // ==========================================
