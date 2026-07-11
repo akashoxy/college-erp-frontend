@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -13,8 +13,6 @@ import {
 
 const displayFont = { fontFamily: "'Fraunces', 'Georgia', serif" };
 const monoFont = { fontFamily: "'JetBrains Mono', monospace" };
-
-const API_URL = "http://localhost:5000/api/journal";
 
 const container = {
   hidden: {},
@@ -42,8 +40,8 @@ export default function Journals() {
 
   const loadJournalData = async () => {
     try {
-      const res = await axios.get(API_URL);
-      setJournalData(res.data.data);
+      const res = await api.get("/journal");
+setJournalData(res.data.data);
     } catch (error) {
       console.error(error);
     } finally {
