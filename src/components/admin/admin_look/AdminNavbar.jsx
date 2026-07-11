@@ -110,6 +110,10 @@ const AUTH_KEYS = ["token", "user"];
 
 /* ==========================================
    DESKTOP DROPDOWN
+
+   Sizing steps down at `lg` (tightest available width,
+   especially when the sidebar is expanded) and steps back
+   up at `xl` and `2xl` as more room becomes available.
 ========================================== */
 
 const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
@@ -125,9 +129,10 @@ const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
         aria-haspopup="true"
         aria-expanded={isOpen}
         className={`
-          h-10 px-2.5
+          h-10 px-1.5 lg:px-1.5 xl:px-2 2xl:px-2.5
           flex items-center gap-1 shrink-0
-          text-[13px] font-semibold tracking-wide whitespace-nowrap rounded-lg
+          text-[12px] lg:text-[12px] xl:text-[12.5px] 2xl:text-[13px]
+          font-semibold tracking-wide whitespace-nowrap rounded-lg
           transition-colors duration-200
           hover:text-primary
           ${isOpen || active ? "text-primary" : "text-base-content/75"}
@@ -135,9 +140,9 @@ const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
       >
         {title}
         <ChevronDown
-          size={13}
+          size={12}
           aria-hidden="true"
-          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : "opacity-50"}`}
+          className={`transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180" : "opacity-50"}`}
         />
       </button>
 
@@ -186,16 +191,15 @@ const MenuItem = ({ to, children, onClick }) => (
 
    Breakpoint policy: everything below `lg` uses the
    hamburger + full-screen drawer. Everything `lg` and up
-   uses the inline dropdown nav. This matches Sidebar's own
-   `lg:flex` breakpoint exactly, so there is no width range
-   where both the drawer AND the desktop rail try to own
+   uses the inline dropdown nav — matching Sidebar's own
+   `lg:flex` breakpoint exactly, so there's no width range
+   where both the drawer and desktop rail try to own
    navigation at once.
 
-   The inline nav row is horizontally scrollable (not
-   wrapping) so that on tighter `lg`/`xl` widths — e.g. when
-   the sidebar is expanded and eating into the available
-   width — the navbar items stay on one line and are fixed
-   in place instead of wrapping to a second row or overflowing.
+   No scrolling and no clipping on the inline nav row:
+   sizing instead steps down at `lg` (tightest available
+   width, especially with an expanded sidebar) and steps
+   back up at `xl`/`2xl` as more room becomes available.
 ========================================== */
 
 export default function AdminNavbar() {
@@ -232,10 +236,10 @@ export default function AdminNavbar() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300">
-        <div className="flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
+        <div className="flex items-center justify-between gap-2 lg:gap-3 xl:gap-4 px-4 sm:px-6 h-16">
 
           {/* Left cluster — menu, primary nav */}
-          <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation"
@@ -245,13 +249,12 @@ export default function AdminNavbar() {
             </button>
 
             <nav
-  aria-label="Admin navigation"
-  className="
-    hidden lg:flex items-center gap-0.5
-    min-w-0 flex-1
-    overflow-hidden
-  "
->
+              aria-label="Admin navigation"
+              className="
+                hidden lg:flex items-center gap-0
+                min-w-0 flex-1 flex-nowrap
+              "
+            >
               {NAV_ITEMS.map(({ key, label, items }) => (
                 <div key={key} className="shrink-0">
                   <Dropdown
@@ -275,8 +278,9 @@ export default function AdminNavbar() {
                   key={to}
                   to={to}
                   className={`
-                    h-10 px-3 rounded-lg flex items-center shrink-0
-                    text-[13px] font-semibold whitespace-nowrap
+                    h-10 px-1.5 lg:px-1.5 xl:px-2 2xl:px-3 rounded-lg flex items-center shrink-0
+                    text-[12px] lg:text-[12px] xl:text-[12.5px] 2xl:text-[13px]
+                    font-semibold whitespace-nowrap
                     transition-colors duration-200
                     ${location.pathname.startsWith(to)
                       ? "text-primary"
@@ -294,12 +298,13 @@ export default function AdminNavbar() {
             <button
               onClick={handleBackToProfile}
               className="
-                h-9 pl-3 pr-3.5 rounded-full
+                h-9 pl-2.5 pr-3 xl:pl-3 xl:pr-3.5 rounded-full
                 flex items-center gap-1.5
                 border border-base-300
-                text-[12.5px] font-semibold text-base-content/70
+                text-[12px] xl:text-[12.5px] font-semibold text-base-content/70
                 hover:border-primary/40 hover:text-primary hover:bg-primary/5
                 transition-colors duration-200
+                shrink-0
               "
             >
               <ArrowLeft size={14} />
