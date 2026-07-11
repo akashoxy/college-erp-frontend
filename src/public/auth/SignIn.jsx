@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../assets/images/tih-logo.png"
 
@@ -94,12 +94,10 @@ export default function SignIn() {
         }
       }
 
-      const API_MAP = {
-        student:
-          "http://localhost:5000/api/student/register",
-        faculty:
-          "http://localhost:5000/api/faculty/register",
-      };
+    const API_MAP = {
+  student: "/student/register",
+  faculty: "/faculty/register",
+};
 
       const payload = {
         name: form.name.trim(),
@@ -126,16 +124,10 @@ export default function SignIn() {
         );
       }
 
-      const res = await axios.post(
-        API_MAP[role],
-        payload,
-        {
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-        }
-      );
+    const res = await api.post(
+  API_MAP[role],
+  payload
+);
 
       alert(
         res.data.message ||
