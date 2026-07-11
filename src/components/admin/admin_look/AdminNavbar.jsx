@@ -279,13 +279,6 @@ export default function AdminNavbar() {
 
           {/* Right cluster — account actions, always visible */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="w-9 h-9 rounded-lg hidden sm:flex items-center justify-center text-base-content/60 hover:bg-base-200 hover:text-primary transition-colors duration-200"
-            >
-              <Bell size={18} />
-            </button>
 
             <div className="hidden sm:block w-px h-6 bg-base-300 mx-1" aria-hidden="true" />
 
@@ -302,21 +295,6 @@ export default function AdminNavbar() {
             >
               <ArrowLeft size={14} />
               <span className="hidden sm:inline">Back to Profile</span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              aria-label="Log out"
-              title="Log out"
-              className="
-                w-9 h-9 rounded-full
-                flex items-center justify-center
-                text-base-content/60
-                hover:bg-error/10 hover:text-error
-                transition-colors duration-200
-              "
-            >
-              <LogOut size={17} />
             </button>
           </div>
 
@@ -390,25 +368,6 @@ export default function AdminNavbar() {
                 {label}
               </MenuItem>
             ))}
-
-            <div className="mt-2 pt-4 border-t border-base-300">
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  handleLogout();
-                }}
-                className="
-                  w-full flex items-center gap-2
-                  px-4 py-2.5 rounded-xl
-                  text-[13.5px] font-medium text-error
-                  hover:bg-error/8
-                  transition-all duration-200
-                "
-              >
-                <LogOut size={15} />
-                Log out
-              </button>
-            </div>
           </nav>
         </div>
       </div>
