@@ -53,7 +53,7 @@ export default function Dashboard() {
     >
       {/* ===== HEADER ===== */}
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[#E1E3DE] pb-6">
-        <div>
+        <div className="pl-5">
           <span
             className="text-[11px] tracking-[0.25em] uppercase text-[#A6763D]"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
@@ -68,7 +68,7 @@ export default function Dashboard() {
           </h1>
         </div>
         <span
-          className="text-xs text-[#182333]/50"
+          className="text-xs text-[#182333]/50 pr-5"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           {today}
@@ -76,7 +76,7 @@ export default function Dashboard() {
       </div>
 
       {/* ===== QUICK ACCESS ===== */}
-      <div>
+      <div className="flex flex-col pl-5 pr-5">
         <h2
           className="text-sm tracking-[0.2em] uppercase text-[#182333]/60 mb-4"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
