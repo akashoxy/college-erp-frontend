@@ -194,9 +194,8 @@ const PlacementControl = () => {
         ]);
 
         setRecruiters(
-          recruitersRes.data
-            .data || []
-        );
+  recruitersRes.data?.data?.recruiters || []
+);
 
         setStudents(
           studentsRes.data

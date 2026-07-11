@@ -159,33 +159,33 @@ setStudents(
       FETCH DASHBOARD STATS
   ========================================================== */
 
-  const fetchStats =
-    useCallback(async () => {
+  const fetchStats = useCallback(async () => {
+  try {
+    const { data } = await api.get(
+      "/admin/students/stats/dashboard"
+    );
 
-      try {
-
-        const { data } =
-          await api.get(
-            "/admin/students/stats/dashboard"
-          );
-
-        setStats({
-  total: data.stats?.total ?? 0,
-  active: data.stats?.active ?? 0,
-  passout: data.stats?.passout ?? 0,
-  suspended: data.stats?.suspended ?? 0,
-  bca: data.stats?.streams?.bca ?? 0,
-  bba: data.stats?.streams?.bba ?? 0,
-  mca: data.stats?.streams?.mca ?? 0,
-});
-
-      } catch (error) {
-
-        console.error(error);
-
-      }
-
-    }, []);
+    setStats({
+      total: data.total ?? 0,
+      active: data.active ?? 0,
+      passout: data.passout ?? 0,
+      suspended: data.suspended ?? 0,
+      bca: data.bca ?? 0,
+      bba: data.bba ?? 0,
+      mca: data.mca ?? 0,
+    });
+  } catch (error) {
+    setStats({
+      total: 0,
+      active: 0,
+      passout: 0,
+      suspended: 0,
+      bca: 0,
+      bba: 0,
+      mca: 0,
+    });
+  }
+}, []);
 
   /* ==========================================================
       INITIAL LOAD
