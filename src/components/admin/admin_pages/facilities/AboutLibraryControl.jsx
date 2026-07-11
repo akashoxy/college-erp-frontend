@@ -340,15 +340,6 @@ const resetForm = async () => {
 };
 
   /* ==========================================
-      PART 2 STARTS HERE
-
-      Save
-      Delete
-      Librarian CRUD
-      Ebook CRUD
-
-  ========================================== */
-    /* ==========================================
       SAVE LIBRARY
   ========================================== */
 
@@ -884,17 +875,17 @@ if (!validation.valid) {
     !!sidePreview;
 
   /* ==========================================
-      PART 3 STARTS HERE
-
-      Hero
-      Statistics
-      About Library
-      Reading Room
-      Online Library
-
-  ========================================== */
-    /* ==========================================
       RETURN
+
+      New section order:
+      1. Hero
+      2. Dashboard stats
+      3. About Library
+      4. Librarians
+      5. Digital E-Books
+      6. Side Image  |  Reading Room  (+ Online Library)
+      7. Live Preview
+      8. Sticky footer / modals
   ========================================== */
 
   return (
@@ -1052,7 +1043,7 @@ if (!validation.valid) {
         </div>
 
         {/* ==========================================
-            MAIN FORM
+            1. ABOUT LIBRARY
         ========================================== */}
 
         <div className="card bg-base-100 shadow-xl border border-base-300 mt-8">
@@ -1061,162 +1052,29 @@ if (!validation.valid) {
 
             <h2 className="card-title text-2xl">
 
-              Library Information
+              About Library
 
             </h2>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="divider mt-0"></div>
 
-              {/* LEFT */}
-
-              <div className="space-y-6">
-
-                {/* Side Image */}
-
-                <div>
-
-                  <label className="label">
-
-                    <span className="label-text">
-
-                      Side Image
-
-                    </span>
-
-                  </label>
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="file-input file-input-bordered w-full"
-                    onChange={handleSideImage}
-                  />
-
-                  <label className="label">
-
-                    <span className="label-text-alt">
-
-                      {getUploadMessage(
-                        IMAGE_UPLOAD
-                      )}
-
-                    </span>
-
-                  </label>
-
-                  {sidePreview && (
-
-                    <img
-                      src={sidePreview}
-                      alt="Library"
-                      className="mt-4 w-full h-72 rounded-2xl object-cover border border-base-300"
-                    />
-
-                  )}
-
-                </div>
-
-                {/* About */}
-
-                <div>
-
-                  <label className="label">
-
-                    <span className="label-text">
-
-                      About Library
-
-                    </span>
-
-                  </label>
-
-                  <textarea
-                    name="paragraph"
-                    value={formData.paragraph}
-                    onChange={handleChange}
-                    className="textarea textarea-bordered h-56 w-full"
-                    placeholder="Write about the library..."
-                  />
-
-                </div>
-
-              </div>
-
-              {/* RIGHT */}
-
-              <div className="space-y-6">
-
-                {/* Reading Room */}
-
-                <div>
-
-                  <label className="label">
-
-                    <span className="label-text">
-
-                      Reading Room
-
-                    </span>
-
-                  </label>
-
-                  <textarea
-                    name="readingRoom"
-                    value={formData.readingRoom}
-                    onChange={handleChange}
-                    className="textarea textarea-bordered h-40 w-full"
-                    placeholder="Reading room details..."
-                  />
-
-                </div>
-
-                {/* Online Library */}
-
-                <div>
-
-                  <label className="label">
-
-                    <span className="label-text">
-
-                      Online Library
-
-                    </span>
-
-                  </label>
-
-                  <textarea
-                    name="onlineLibrary"
-                    value={formData.onlineLibrary}
-                    onChange={handleChange}
-                    className="textarea textarea-bordered h-40 w-full"
-                    placeholder="Digital library information..."
-                  />
-
-                </div>
-
-              </div>
-
-            </div>
+            <textarea
+              name="paragraph"
+              value={formData.paragraph}
+              onChange={handleChange}
+              className="textarea textarea-bordered h-56 w-full"
+              placeholder="Write about the library..."
+            />
 
           </div>
 
         </div>
 
-      </div>
+        {/* ==========================================
+            2. LIBRARIANS
+        ========================================== */}
 
-      {/* ==========================================
-          PART 4 STARTS HERE
-
-          Librarian Section
-
-      ========================================== */}
-            {/* ==========================================
-          LIBRARIANS
-      ========================================== */}
-
-      <div className="max-w-7xl mx-auto px-6 pb-8">
-
-        <div className="card bg-base-100 shadow-xl border border-base-300">
+        <div className="card bg-base-100 shadow-xl border border-base-300 mt-8">
 
           <div className="card-body">
 
@@ -1430,21 +1288,11 @@ if (!validation.valid) {
 
         </div>
 
-      </div>
+        {/* ==========================================
+            3. DIGITAL E-BOOKS
+        ========================================== */}
 
-      {/* ==========================================
-          PART 5 STARTS HERE
-
-          E-Books Section
-
-      ========================================== */}
-            {/* ==========================================
-          E-BOOKS
-      ========================================== */}
-
-      <div className="max-w-7xl mx-auto px-6 pb-8">
-
-        <div className="card bg-base-100 shadow-xl border border-base-300">
+        <div className="card bg-base-100 shadow-xl border border-base-300 mt-8">
 
           <div className="card-body">
 
@@ -1684,15 +1532,126 @@ if (!validation.valid) {
 
         </div>
 
+        {/* ==========================================
+            4. SIDE IMAGE  |  READING ROOM
+        ========================================== */}
+
+        <div className="card bg-base-100 shadow-xl border border-base-300 mt-8">
+
+          <div className="card-body">
+
+            <h2 className="card-title text-2xl">
+
+              Side Image &amp; Reading Room
+
+            </h2>
+
+            <div className="divider mt-0"></div>
+
+            <div className="grid lg:grid-cols-2 gap-8">
+
+              {/* Side Image */}
+
+              <div>
+
+                <label className="label">
+
+                  <span className="label-text font-semibold">
+
+                    Side Image
+
+                  </span>
+
+                </label>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full"
+                  onChange={handleSideImage}
+                />
+
+                <label className="label">
+
+                  <span className="label-text-alt">
+
+                    {getUploadMessage(
+                      IMAGE_UPLOAD
+                    )}
+
+                  </span>
+
+                </label>
+
+                {sidePreview && (
+
+                  <img
+                    src={sidePreview}
+                    alt="Library"
+                    className="mt-4 w-full h-72 rounded-2xl object-cover border border-base-300"
+                  />
+
+                )}
+
+              </div>
+
+              {/* Reading Room */}
+
+              <div>
+
+                <label className="label">
+
+                  <span className="label-text font-semibold">
+
+                    Reading Room
+
+                  </span>
+
+                </label>
+
+                <textarea
+                  name="readingRoom"
+                  value={formData.readingRoom}
+                  onChange={handleChange}
+                  className="textarea textarea-bordered h-56 w-full"
+                  placeholder="Reading room details..."
+                />
+
+              </div>
+
+            </div>
+
+            {/* Online Library */}
+
+            <div className="mt-8">
+
+              <label className="label">
+
+                <span className="label-text font-semibold">
+
+                  Online Library
+
+                </span>
+
+              </label>
+
+              <textarea
+                name="onlineLibrary"
+                value={formData.onlineLibrary}
+                onChange={handleChange}
+                className="textarea textarea-bordered h-40 w-full"
+                placeholder="Digital library information..."
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
       {/* ==========================================
-          PART 6 STARTS HERE
-
-          Live Preview
-
-      ========================================== */}
-            {/* ==========================================
           LIVE WEBSITE PREVIEW
       ========================================== */}
 
@@ -1710,128 +1669,25 @@ if (!validation.valid) {
 
             <div className="divider"></div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            {/* About Library */}
 
-              {/* Side Image */}
+            <div>
 
-              <div>
+              <h3 className="font-bold mb-4">
 
-                <h3 className="font-bold mb-4">
-
-                  Library Image
-
-                </h3>
-
-                <div className="rounded-2xl overflow-hidden border border-base-300 bg-base-200">
-
-                  {sidePreview ? (
-
-                    <img
-                      src={sidePreview}
-                      alt="Library"
-                      className="w-full h-80 object-cover"
-                    />
-
-                  ) : (
-
-                    <div className="h-80 flex flex-col items-center justify-center">
-
-                      <Image
-                        size={70}
-                        className="opacity-30"
-                      />
-
-                      <p className="mt-4 opacity-60">
-
-                        Library Image Preview
-
-                      </p>
-
-                    </div>
-
-                  )}
-
-                </div>
-
-              </div>
-
-              {/* About */}
-
-              <div>
-
-                <h3 className="font-bold mb-4">
-
-                  About Library
-
-                </h3>
-
-                <div className="rounded-2xl border border-base-300 bg-base-200 p-6 h-80 overflow-auto">
-
-                  <p className="leading-8 whitespace-pre-wrap">
-
-                    {
-
-                      formData.paragraph ||
-
-                      "Library description will appear here."
-
-                    }
-
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* Reading Room */}
-
-            <div className="mt-8">
-
-              <h3 className="font-bold text-xl mb-4">
-
-                Reading Room
+                About Library
 
               </h3>
 
-              <div className="rounded-2xl border border-base-300 bg-base-200 p-6">
+              <div className="rounded-2xl border border-base-300 bg-base-200 p-6 min-h-40 overflow-auto">
 
                 <p className="leading-8 whitespace-pre-wrap">
 
                   {
 
-                    formData.readingRoom ||
+                    formData.paragraph ||
 
-                    "Reading room information."
-
-                  }
-
-                </p>
-
-              </div>
-
-            </div>
-
-            {/* Online Library */}
-
-            <div className="mt-8">
-
-              <h3 className="font-bold text-xl mb-4">
-
-                Online Library
-
-              </h3>
-
-              <div className="rounded-2xl border border-base-300 bg-base-200 p-6">
-
-                <p className="leading-8 whitespace-pre-wrap">
-
-                  {
-
-                    formData.onlineLibrary ||
-
-                    "Online library information."
+                    "Library description will appear here."
 
                   }
 
@@ -2077,6 +1933,95 @@ if (!validation.valid) {
 
             </div>
 
+            {/* Side Image | Reading Room */}
+
+            <div className="mt-10">
+
+              <h3 className="font-bold text-xl mb-5">
+
+                Side Image &amp; Reading Room
+
+              </h3>
+
+              <div className="grid lg:grid-cols-2 gap-8">
+
+                <div className="rounded-2xl overflow-hidden border border-base-300 bg-base-200">
+
+                  {sidePreview ? (
+
+                    <img
+                      src={sidePreview}
+                      alt="Library"
+                      className="w-full h-80 object-cover"
+                    />
+
+                  ) : (
+
+                    <div className="h-80 flex flex-col items-center justify-center">
+
+                      <Image
+                        size={70}
+                        className="opacity-30"
+                      />
+
+                      <p className="mt-4 opacity-60">
+
+                        Library Image Preview
+
+                      </p>
+
+                    </div>
+
+                  )}
+
+                </div>
+
+                <div className="rounded-2xl border border-base-300 bg-base-200 p-6 h-80 overflow-auto">
+
+                  <p className="leading-8 whitespace-pre-wrap">
+
+                    {
+
+                      formData.readingRoom ||
+
+                      "Reading room information."
+
+                    }
+
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="mt-8">
+
+                <h4 className="font-bold mb-4">
+
+                  Online Library
+
+                </h4>
+
+                <div className="rounded-2xl border border-base-300 bg-base-200 p-6">
+
+                  <p className="leading-8 whitespace-pre-wrap">
+
+                    {
+
+                      formData.onlineLibrary ||
+
+                      "Online library information."
+
+                    }
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
             {/* ACTION BUTTONS */}
 
             <div className="flex flex-wrap gap-4 mt-10">
@@ -2127,16 +2072,6 @@ className="btn btn-primary flex-1"
       </div>
 
       {/* ==========================================
-          PART 7 STARTS HERE
-
-          Sticky Footer
-          StatusModal
-          LoadingModal
-          DeleteModal
-          Export
-
-      ========================================== */}
-            {/* ==========================================
           STICKY FOOTER
       ========================================== */}
 

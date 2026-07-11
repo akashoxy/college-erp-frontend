@@ -230,19 +230,6 @@ export default function AdminNavbar() {
             >
               <Menu size={20} />
             </button>
-
-            {/*
-              Ten top-level items (8 dropdown groups + 2 direct links) need
-              real room — even at `xl` (1280px) they don't fit next to the
-              brand and the right-side account cluster, which was causing
-              each item to flex-shrink and its label to wrap across
-              multiple lines, colliding with the buttons on the right.
-              The full horizontal nav is now reserved for `2xl` (1536px)
-              and up; everything below that uses the mobile/tablet drawer,
-              which already contains every section. `whitespace-nowrap` +
-              `shrink-0` on each item is a safety net so that even at the
-              edge of `2xl`, items scroll horizontally instead of wrapping.
-            */}
             <nav
               aria-label="Admin navigation"
               className="hidden 2xl:flex items-center gap-0.5"
