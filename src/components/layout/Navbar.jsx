@@ -13,13 +13,6 @@ import tihLogo from "../../assets/images/tih-logo.png";
 /* ==========================================
    NAV CONFIG — single source of truth
    Edit here; no need to touch JSX below.
-
-   `align: "right"` is used for dropdowns whose trigger
-   sits near the right edge of the nav row (Admission,
-   Campus Tour, Student). Their panels anchor to the
-   button's right edge instead of its left edge, so they
-   never overflow past the viewport on narrower `lg`/`xl`
-   laptop widths.
 ========================================== */
 
 const NAV_ITEMS = [
@@ -75,7 +68,6 @@ const NAV_ITEMS = [
     key: "admission",
     label: "Admission",
     width: "w-64",
-    align: "right",
     items: [
       { to: "/admission-procedure", label: "Admission" },
       { to: "/fees-structure", label: "Fees Structure" },
@@ -85,7 +77,6 @@ const NAV_ITEMS = [
     key: "campus",
     label: "Campus Tour",
     width: "w-64",
-    align: "right",
     items: [
       { to: "/campus-placement", label: "Campus Placement" },
       { to: "/photo-gallery", label: "Photo Gallery" },
@@ -97,7 +88,6 @@ const NAV_ITEMS = [
     key: "student",
     label: "Student",
     width: "w-72",
-    align: "right",
     items: [
       { to: "/previous-question", label: "Previous Year Question" },
       { to: "/syllabus", label: "Syllabus" },
@@ -115,7 +105,7 @@ const DIRECT_LINKS = [
    REUSABLE DROPDOWN
 ========================================== */
 
-const Dropdown = ({ title, menuKey, open, setOpen, children, width = "w-72", align = "left" }) => {
+const Dropdown = ({ title, menuKey, open, setOpen, children, width = "w-72" }) => {
   const isOpen = open === menuKey;
 
   return (
@@ -127,32 +117,24 @@ const Dropdown = ({ title, menuKey, open, setOpen, children, width = "w-72", ali
       <button
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className="
-          flex items-center gap-1 whitespace-nowrap
-          text-[11.5px] lg:text-[12px] 2xl:text-[12.5px]
-          font-semibold tracking-wide text-white/85
-          transition-colors duration-200 hover:text-white
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
-          rounded-md px-1
-        "
+        className="flex items-center gap-1 whitespace-nowrap text-[12px] font-semibold tracking-wide text-white/85 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md px-1"
       >
         {title}
         <IoChevronDown
           size={12}
           aria-hidden="true"
-          className={`transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180 text-primary-content" : "opacity-60"}`}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180 text-primary-content" : "opacity-60"}`}
         />
       </button>
 
       {/* Invisible bridge so the menu doesn't close when moving mouse from button to panel */}
-      <div className={`absolute top-full h-3 w-full ${align === "right" ? "right-0" : "left-0"}`} aria-hidden="true" />
+      <div className="absolute left-0 top-full h-3 w-full" aria-hidden="true" />
 
       <div
         role="menu"
         className={`
-          absolute top-full mt-3
-          ${align === "right" ? "right-0" : "left-0"}
-          ${width} max-w-[92vw]
+          absolute left-0 top-full mt-3
+          ${width}
           bg-base-100 text-base-content
           border border-base-300 shadow-2xl rounded-2xl p-2.5 z-50
           transition-all duration-200 origin-top
@@ -250,7 +232,7 @@ function Navbar() {
       {/* NAVBAR */}
       <header
         className={`
-          sticky top-0 z-50 h-16 sm:h-18 md:h-20
+          sticky top-0 z-50 h-18 md:h-20
           bg-linear-to-r from-slate-900 via-primary to-slate-900
           text-white border-b border-white/10 backdrop-blur
           transition-shadow duration-300
@@ -258,36 +240,33 @@ function Navbar() {
         `}
       >
         <nav
-          className="max-w-362.5 mx-auto h-full px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2"
+          className="max-w-362.5 mx-auto h-full px-4 sm:px-6 flex items-center justify-between"
           aria-label="Main navigation"
         >
           {/* LOGO */}
-         {/* LOGO */}
-<Link to="/" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
-  <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0">
-    <img
-      src={tihLogo}
-      alt="Techno India Hooghly"
-      width={40}
-      height={40}
-      loading="eager"
-      decoding="async"
-      className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full object-cover"
-    />
-  </div>
-  <div className="min-w-0">
-    <h2 className="font-serif text-[12.5px] xs:text-sm sm:text-sm md:text-base font-bold tracking-wide truncate leading-tight">
-      Techno College Hooghly
-    </h2>
-    <p className="hidden sm:block text-[11px] text-white/60 truncate">
-      A Technical &amp; Management College
-    </p>
-  </div>
-</Link>
+          <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0">
+            <div className="w-11 h-11 md:w-12 md:h-12 rounded-full overflow-hidden bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0">
+              <img
+                src={tihLogo}
+                alt="Techno India Hooghly"
+                width={40}
+                height={40}
+                loading="eager"
+                decoding="async"
+                className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover"
+              />
+            </div>
+            <div className="hidden sm:block min-w-0">
+              <h2 className="font-serif text-sm md:text-base font-bold tracking-wide truncate">
+                Techno College Hooghly
+              </h2>
+              <p className="text-[11px] text-white/60 truncate">A Technical &amp; Management College</p>
+            </div>
+          </Link>
 
-          {/* DESKTOP MENU — visible xl and up, matching the hamburger's xl:hidden */}
-          <div className="hidden xl:flex items-center gap-2.5 2xl:gap-4 h-full min-w-0 flex-1 justify-center">
-            {NAV_ITEMS.map(({ key, label, items, width, align }) => (
+          {/* DESKTOP MENU */}
+          <div className="hidden xl:flex items-center gap-4 h-full">
+            {NAV_ITEMS.map(({ key, label, items, width }) => (
               <Dropdown
                 key={key}
                 title={label}
@@ -295,7 +274,6 @@ function Navbar() {
                 open={open}
                 setOpen={setOpen}
                 width={width}
-                align={align}
               >
                 {items.map((item, idx) => {
                   if (item.divider) {
@@ -322,7 +300,7 @@ function Navbar() {
               <Link
                 key={to}
                 to={to}
-                className="whitespace-nowrap text-[11.5px] lg:text-[12px] 2xl:text-[12.5px] font-semibold tracking-wide text-white/85 hover:text-white transition-colors duration-200"
+                className="whitespace-nowrap text-[12px] font-semibold tracking-wide text-white/85 hover:text-white transition-colors duration-200"
               >
                 {label}
               </Link>
@@ -330,11 +308,11 @@ function Navbar() {
           </div>
 
           {/* RIGHT SECTION */}
-          <div className="flex items-center gap-1.5 sm:gap-2 2xl:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 2xl:gap-4">
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="hidden md:flex w-9 h-9 lg:w-10 lg:h-10 rounded-full items-center justify-center border border-white/15 hover:bg-white/10 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="hidden md:flex w-10 h-10 rounded-full items-center justify-center border border-white/15 hover:bg-white/10 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
               aria-label={theme === "sunset" ? "Switch to dark mode" : "Switch to light mode"}
             >
               {theme === "sunset" ? <Sun size={17} /> : <Moon size={17} />}
@@ -346,7 +324,7 @@ function Navbar() {
             {!isLoginPage && (
               <Link
                 to={user ? "/profile" : "/login"}
-                className="hidden md:inline-flex items-center h-9 lg:h-10 px-4 lg:px-5 rounded-full bg-white text-primary text-[12.5px] lg:text-[13px] font-semibold hover:bg-white/90 transition-colors duration-200 whitespace-nowrap"
+                className="hidden md:inline-flex items-center h-10 px-5 rounded-full bg-white text-primary text-[13px] font-semibold hover:bg-white/90 transition-colors duration-200"
               >
                 {user ? user.name || "Profile" : "Login"}
               </Link>
@@ -357,9 +335,9 @@ function Navbar() {
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
               aria-expanded={mobileOpen}
-              className="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors duration-200 shrink-0"
+              className="xl:hidden w-10 h-10 rounded-xl border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors duration-200"
             >
-              <HiOutlineMenuAlt3 size={20} />
+              <HiOutlineMenuAlt3 size={22} />
             </button>
           </div>
         </nav>
@@ -388,15 +366,15 @@ function Navbar() {
           ref={sidebarRef}
           className={`
             absolute top-0 right-0
-            w-[88%] max-w-sm h-screen h-dvh
+            w-[88%] max-w-sm h-screen
             bg-base-100 border-l border-base-300 shadow-2xl
-            flex flex-col overflow-hidden
+            flex flex-col
             transition-transform duration-200
             ${mobileOpen ? "translate-x-0" : "translate-x-full"}
           `}
         >
           {/* MOBILE HEADER */}
-          <div className="flex items-center justify-between px-4 sm:px-5 py-4 sm:py-5 border-b border-base-300 shrink-0">
+          <div className="flex items-center justify-between px-5 py-5 border-b border-base-300 shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               <img
                 src={tihLogo}
@@ -405,7 +383,7 @@ function Navbar() {
                 height={40}
                 loading="lazy"
                 decoding="async"
-                className="w-9 h-9 sm:w-10 sm:h-10 object-contain rounded-full shrink-0"
+                className="w-10 h-10 object-contain rounded-full"
               />
               <div className="min-w-0">
                 <p className="font-serif font-bold text-sm truncate">Techno India Hooghly</p>
@@ -416,14 +394,14 @@ function Navbar() {
             <button
               onClick={closeMobile}
               aria-label="Close menu"
-              className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl border border-base-300 flex items-center justify-center hover:bg-base-200 transition-colors duration-200"
+              className="w-10 h-10 shrink-0 rounded-xl border border-base-300 flex items-center justify-center hover:bg-base-200 transition-colors duration-200"
             >
-              <IoClose size={20} />
+              <IoClose size={22} />
             </button>
           </div>
 
           {/* MOBILE LINKS — flat list derived from NAV_ITEMS */}
-          <nav className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-5 py-4 sm:py-5 flex flex-col gap-1" aria-label="Mobile navigation links">
+          <nav className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-1" aria-label="Mobile navigation links">
             <MenuItem to="/" onClick={closeMobile}>Home</MenuItem>
 
             {/* Render each nav group as a labelled section */}
@@ -453,13 +431,10 @@ function Navbar() {
           </nav>
 
           {/* MOBILE FOOTER ACTIONS */}
-          <div
-            className="shrink-0 border-t border-base-300 p-4 sm:p-5 flex items-center gap-3"
-            style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
-          >
+          <div className="shrink-0 border-t border-base-300 p-5 flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="w-11 h-11 rounded-xl border border-base-300 flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
+              className="w-11 h-11 rounded-xl border border-base-300 flex items-center justify-center hover:bg-base-200 transition-colors duration-200"
               aria-label={theme === "sunset" ? "Switch to dark mode" : "Switch to light mode"}
             >
               {theme === "sunset" ? <Sun size={18} /> : <Moon size={18} />}
@@ -469,7 +444,7 @@ function Navbar() {
               <Link
                 to={user ? "/profile" : "/login"}
                 onClick={closeMobile}
-                className="flex-1 inline-flex items-center justify-center h-11 rounded-xl bg-primary text-primary-content font-semibold text-sm truncate px-3"
+                className="flex-1 inline-flex items-center justify-center h-11 rounded-xl bg-primary text-primary-content font-semibold text-sm"
               >
                 {user ? user.name || "Profile" : "Login"}
               </Link>
