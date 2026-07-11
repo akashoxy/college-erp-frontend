@@ -285,10 +285,6 @@ setFacultyData(res.data?.data || []);
         </div>
       </section>
 
-      {/* ==================================
-          PART 2 STARTS HERE
-          SEARCH + FACULTY MEMBERS
-      ================================== */}
             {/* ==================================
           SEARCH SECTION
       ================================== */}
@@ -570,10 +566,7 @@ setFacultyData(res.data?.data || []);
         </div>
       </section>
 
-      {/* ==================================
-          PART 3 STARTS HERE
-          LAB STAFF + LIBRARY STAFF
-      ================================== */}
+  
             {/* ==================================
           LAB STAFF SECTION
       ================================== */}
@@ -856,10 +849,7 @@ setFacultyData(res.data?.data || []);
         </div>
       </section>
 
-      {/* ==================================
-          PART 4 STARTS HERE
-          PROFILE MODAL 
-      ================================== */}
+      
             {/* ==================================
           FACULTY PROFILE MODAL
       ================================== */}

@@ -1483,10 +1483,7 @@ setStudents(
 
           </div>
 
-          {/* ==========================================================
-              STUDENT TABLE
-              (Continues in Part 3B)
-          ========================================================== */}
+          
                     <div className="card bg-base-100 border border-base-300 shadow-xl">
 
             <div className="overflow-x-auto">
@@ -1832,10 +1829,7 @@ setStudents(
 
           </div>
 
-          {/* ==========================================================
-              STICKY ACTION BAR
-              (Continues in Part 4)
-          ========================================================== */}
+          
                     <div className="sticky bottom-4 z-30">
 
             <div className="card bg-base-100 border border-base-300 shadow-2xl">

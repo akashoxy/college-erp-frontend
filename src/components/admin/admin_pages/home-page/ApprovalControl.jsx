@@ -97,11 +97,7 @@ export default function ApprovalControl() {
     setDeleteAllModal,
   ] = useState(false);
 
-  /* ===========================
-      FETCH APPROVALS
-
-      Continue in Part 2
-  =========================== */
+  
     const fetchApprovals = async () => {
     try {
       setLoading(true);
@@ -209,9 +205,7 @@ export default function ApprovalControl() {
     setFormData(initialForm);
   };
 
-  /* ===========================
-      Continue in Part 3
-  =========================== */
+ 
     /* ===========================
       CREATE / UPDATE
   =========================== */
@@ -449,9 +443,6 @@ export default function ApprovalControl() {
         approval.websiteLink
     ).length;
 
-  /* ===========================
-      Continue in Part 4
-  =========================== */
     return (
     <>
       {/* ===========================
@@ -671,9 +662,7 @@ export default function ApprovalControl() {
 
         </div>
 
-        {/* ===========================
-            Continue in Part 5
-        =========================== */}
+      
                 {/* ===========================
             APPROVAL FORM
         =========================== */}
@@ -980,9 +969,7 @@ export default function ApprovalControl() {
 
         </motion.div>
 
-        {/* ===========================
-            Continue in Part 6
-        =========================== */}
+      
                 {/* ===========================
             LIVE PREVIEW
         =========================== */}

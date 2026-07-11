@@ -140,9 +140,7 @@ export default function AwardsControl() {
     };
   }, [preview]);
 
-  /* ===========================
-      Continue in Part 1A-1b
-  =========================== */
+ 
     /* ===========================
       FORM HANDLERS
   =========================== */
@@ -419,9 +417,7 @@ export default function AwardsControl() {
         award.image
     ).length;
 
-  /* ===========================
-      Continue in Part 1B
-  =========================== */
+
     return (
     <>
       {/* ===========================
@@ -617,9 +613,7 @@ export default function AwardsControl() {
 
         </div>
 
-        {/* ===========================
-            Continue in Part 1B-2
-        =========================== */}
+        
                 {/* ===========================
             AWARD FORM
         =========================== */}
@@ -793,7 +787,7 @@ export default function AwardsControl() {
 
               </div>
 
-              {/* Continue in Part 1B-2b */}
+             
                             {/* Award Image */}
 
               <div>
@@ -933,9 +927,7 @@ export default function AwardsControl() {
 
         </motion.div>
 
-        {/* ===========================
-            Continue in Part 2
-        =========================== */}
+       
                 {/* ===========================
             AWARDS GALLERY
         =========================== */}
@@ -1139,7 +1131,7 @@ export default function AwardsControl() {
 
                         )}
 
-                        {/* Continue in Part 2B */}
+                        
                                                 {/* ACTIONS */}
 
                         <div className="card-actions justify-end mt-5">

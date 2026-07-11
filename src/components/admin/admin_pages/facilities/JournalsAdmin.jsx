@@ -497,15 +497,7 @@ const JournalsAdmin = () => {
 
     );
 
-  /* ==========================================
-      PART 2 STARTS HERE
 
-      Save Journal
-      Delete Journal
-      Publication CRUD
-      PDF Upload
-
-  ========================================== */
     /* ==========================================
       SAVE JOURNAL CMS
   ========================================== */
@@ -1056,15 +1048,7 @@ const JournalsAdmin = () => {
 
     };
 
-  /* ==========================================
-      PART 3 STARTS HERE
-
-      Edit Publication
-      Delete Publication
-      Reset Publication
-      Dashboard UI
-
-  ========================================== */
+ 
     /* ==========================================
       EDIT PUBLICATION
   ========================================== */
@@ -1369,16 +1353,7 @@ const JournalsAdmin = () => {
 
       </div>
 
-      {/* ==========================================
-          PART 4 STARTS HERE
-
-          Journal CMS Form
-          Banner Upload
-          Paragraph
-          Journal List
-          Side Image
-
-      ========================================== */}
+      
             {/* ==========================================
           JOURNAL CMS
       ========================================== */}
@@ -1741,12 +1716,7 @@ IFCAI Computer Science`}
 
       </div>
 
-      {/* ==========================================
-          PART 5 STARTS HERE
-
-          Research Publications Form
-
-      ========================================== */}
+      
             {/* ==========================================
           RESEARCH PUBLICATIONS
       ========================================== */}
@@ -2036,13 +2006,7 @@ IFCAI Computer Science`}
 
       </div>
 
-      {/* ==========================================
-          PART 6 STARTS HERE
-
-          Publications Grid
-          Live Website Preview
-
-      ========================================== */}
+     
             {/* ==========================================
           PUBLICATIONS GRID
       ========================================== */}
@@ -2455,16 +2419,7 @@ IFCAI Computer Science`}
 
       </div>
 
-      {/* ==========================================
-          PART 7 STARTS HERE
-
-          Sticky Footer
-          StatusModal
-          LoadingModal
-          DeleteModal
-          export default
-
-      ========================================== */}
+      
             {/* ==========================================
           STICKY FOOTER
       ========================================== */}

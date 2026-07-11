@@ -223,9 +223,7 @@ export default function HomepageControl() {
     }
   };
 
-  /* ===========================
-      CONTINUE IN PART 1A-2
-  =========================== */
+  
     /* ===========================
       ADD SLIDE
   =========================== */
@@ -465,7 +463,7 @@ export default function HomepageControl() {
         className="space-y-8"
       >
 
-        {/* Continue in Part 1B */}
+        
                 {/* ===========================
             HERO HEADER
         =========================== */}
@@ -642,7 +640,7 @@ export default function HomepageControl() {
 
             </div>
 
-            {/* Continue in Part 1B-2 */}
+            
                         {/* ===========================
                 HERO SLIDE BUILDER
             =========================== */}
@@ -846,10 +844,7 @@ export default function HomepageControl() {
 
           </div>
 
-          {/* ===========================
-              RIGHT COLUMN
-              Continue in Part 2
-          =========================== */}
+     
 
           <div className="xl:col-span-2">
                         {/* ===========================
@@ -1080,7 +1075,7 @@ export default function HomepageControl() {
 
                           </td>
 
-                          {/* Continue in Part 2B */}
+                        
                                                     <td>
 
                             <span className="badge badge-outline">
