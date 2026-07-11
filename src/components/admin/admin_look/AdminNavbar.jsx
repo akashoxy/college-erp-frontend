@@ -152,7 +152,7 @@ const Dropdown = ({ title, menuKey, open, setOpen, active, children }) => {
           ${isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}
         `}
       >
-        <div className="w-80 max-h-[70vh] overflow-y-auto rounded-2xl bg-base-100 border border-base-300 shadow-2xl p-2.5">
+        <div className="w-80 max-w-[85vw] max-h-[70vh] overflow-y-auto rounded-2xl bg-base-100 border border-base-300 shadow-2xl p-2.5">
           <div className="flex flex-col gap-0.5">{children}</div>
         </div>
       </div>
@@ -183,6 +183,19 @@ const MenuItem = ({ to, children, onClick }) => (
 
 /* ==========================================
    ADMIN NAVBAR
+
+   Breakpoint policy: everything below `lg` uses the
+   hamburger + full-screen drawer. Everything `lg` and up
+   uses the inline dropdown nav. This matches Sidebar's own
+   `lg:flex` breakpoint exactly, so there is no width range
+   where both the drawer AND the desktop rail try to own
+   navigation at once.
+
+   The inline nav row is horizontally scrollable (not
+   wrapping) so that on tighter `lg`/`xl` widths — e.g. when
+   the sidebar is expanded and eating into the available
+   width — the navbar items stay on one line and are fixed
+   in place instead of wrapping to a second row or overflowing.
 ========================================== */
 
 export default function AdminNavbar() {
@@ -221,19 +234,24 @@ export default function AdminNavbar() {
       <header className="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300">
         <div className="flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
 
-          {/* Left cluster — menu, brand, primary nav */}
-          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+          {/* Left cluster — menu, primary nav */}
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation"
-              className="2xl:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
+              className="lg:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center hover:bg-base-200 transition-colors duration-200 shrink-0"
             >
               <Menu size={20} />
             </button>
+
             <nav
-              aria-label="Admin navigation"
-              className="hidden 2xl:flex items-center gap-0.5"
-            >
+  aria-label="Admin navigation"
+  className="
+    hidden lg:flex items-center gap-0.5
+    min-w-0 flex-1
+    overflow-hidden
+  "
+>
               {NAV_ITEMS.map(({ key, label, items }) => (
                 <div key={key} className="shrink-0">
                   <Dropdown
@@ -292,10 +310,10 @@ export default function AdminNavbar() {
         </div>
       </header>
 
-      {/* MOBILE / TABLET DRAWER */}
+      {/* MOBILE / TABLET DRAWER — everything below `lg` */}
       <div
         className={`
-          fixed inset-0 z-[60] 2xl:hidden overflow-hidden
+          fixed inset-0 z-[60] lg:hidden overflow-hidden
           transition-all duration-200
           ${mobileOpen ? "visible opacity-100" : "invisible opacity-0"}
         `}

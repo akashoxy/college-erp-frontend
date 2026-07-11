@@ -1,30 +1,25 @@
-import { memo, useState } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-
-import AdminNavbar from "./AdminNavbar";
 import Sidebar from "./Sidebar";
+import AdminNavbar from "./AdminNavbar";
 
-
-function AdminLayout() {
+export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="h-screen flex overflow-hidden bg-base-200">
+    <div className="flex min-h-screen bg-base-200/30">
+      {/* Sidebar reserves its own width in the flex row.
+          When it collapses (w-72 -> w-20) the column below
+          grows to fill the freed space automatically — no
+          manual offset math needed anywhere. */}
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
-      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-        <header className="shrink-0">
-          <AdminNavbar />
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-5 md:p-7">
-          <section className="min-h-full rounded-3xl border border-base-300 bg-base-100 shadow-sm p-6">
-            <Outlet />
-          </section>
+      <div className="flex-1 min-w-0 flex flex-col">
+        <AdminNavbar />
+        <main className="flex-1 min-w-0">
+          <Outlet />
         </main>
       </div>
     </div>
   );
 }
-
-export default memo(AdminLayout);
