@@ -16,23 +16,100 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 
+/**
+ * Loads the display/body typefaces once, scoped to this page so the
+ * font-family doesn't leak elsewhere. Matches the About Us page so the
+ * two read as one consistent editorial system.
+ */
+function VmFonts() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap');
 
+      .vm-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+      .vm-display {
+        font-family: 'Fraunces', ui-serif, Georgia, serif;
+        font-optical-sizing: auto;
+        letter-spacing: -0.01em;
+      }
+      .vm-eyebrow {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+      .vm-rule {
+        height: 1px;
+        background: color-mix(in srgb, currentColor 18%, transparent);
+      }
+    `}</style>
+  );
+}
+
+/* Reusable eyebrow + thin-rule label, matching the About Us page. */
+function SectionLabel({ children, align = "left", light = false }) {
+  const ruleColor = light ? "bg-primary-content/40" : "bg-primary/40";
+  const textColor = light ? "text-primary-content/80" : "text-primary";
+  return (
+    <div
+      className={`flex items-center gap-4 mb-5 ${
+        align === "center" ? "justify-center" : "justify-start"
+      }`}
+    >
+      {align === "center" && (
+        <motion.span
+          initial={{ width: 0 }}
+          whileInView={{ width: 40 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className={`vm-rule ${ruleColor} shrink-0`}
+        />
+      )}
+      <span className={`vm-eyebrow ${textColor}`}>{children}</span>
+      <motion.span
+        initial={{ width: 0 }}
+        whileInView={{ width: align === "center" ? 40 : 64 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className={`vm-rule ${ruleColor} shrink-0`}
+      />
+    </div>
+  );
+}
+
+const MISSION_ICON_MAP = {
+  AcademicCapIcon,
+  LightBulbIcon,
+  Cog6ToothIcon,
+  GlobeAltIcon,
+};
+
+const CORE_VALUES = [
+  { icon: TrophyIcon, title: "Excellence" },
+  { icon: SparklesIcon, title: "Innovation" },
+  { icon: ShieldCheckIcon, title: "Integrity" },
+  { icon: UserGroupIcon, title: "Leadership" },
+];
+
+const STATS = [
+  { number: "25+", title: "Years Excellence" },
+  { number: "5000+", title: "Students" },
+  { number: "100+", title: "Faculty" },
+  { number: "100%", title: "Commitment" },
+];
 
 export default function VisionMission() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
-     const res = await api.get("/vision-mission");
-
-setData(res.data?.data || null);
-
-      setData(res.data.data);
+      const res = await api.get("/vision-mission");
+      setData(res.data?.data || null);
     } catch (error) {
-    setData(null);
-} finally {
+      setData(null);
+    } finally {
       setLoading(false);
     }
   };
@@ -41,40 +118,15 @@ setData(res.data?.data || null);
     fetchData();
   }, []);
 
-  const getMissionIcon = (
-    iconName
-  ) => {
-    switch (iconName) {
-      case "AcademicCapIcon":
-        return (
-          <AcademicCapIcon className="w-12 h-12 text-primary" />
-        );
-
-      case "LightBulbIcon":
-        return (
-          <LightBulbIcon className="w-12 h-12 text-primary" />
-        );
-
-      case "Cog6ToothIcon":
-        return (
-          <Cog6ToothIcon className="w-12 h-12 text-primary" />
-        );
-
-      case "GlobeAltIcon":
-        return (
-          <GlobeAltIcon className="w-12 h-12 text-primary" />
-        );
-
-      default:
-        return (
-          <AcademicCapIcon className="w-12 h-12 text-primary" />
-        );
-    }
+  const getMissionIcon = (iconName) => {
+    const Icon = MISSION_ICON_MAP[iconName] || AcademicCapIcon;
+    return <Icon className="w-10 h-10 text-primary" strokeWidth={1.5} />;
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-base-200 flex justify-center items-center">
+      <div className="vm-root min-h-screen bg-base-100 flex justify-center items-center">
+        <VmFonts />
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
@@ -82,16 +134,14 @@ setData(res.data?.data || null);
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-base-200 flex justify-center items-center">
+      <div className="vm-root min-h-screen bg-base-100 flex justify-center items-center px-6">
+        <VmFonts />
         <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4 text-base-content">
-            No Vision & Mission Data
-            Found
+          <h2 className="vm-display text-4xl font-medium mb-4 text-base-content">
+            No Vision &amp; Mission Data Found
           </h2>
-
-          <p className="text-base-content/70">
-            Please add content from
-            the admin panel.
+          <p className="text-base-content/60">
+            Please add content from the admin panel.
           </p>
         </div>
       </div>
@@ -99,172 +149,90 @@ setData(res.data?.data || null);
   }
 
   return (
-    <>
-    <div className="bg-base-200 min-h-screen">
+    <div className="vm-root bg-base-100">
+      <VmFonts />
+
+      {/* PAGE HEADING */}
+      <div className="border-b border-base-300">
+        <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="vm-eyebrow text-base-content/50 mb-3"
+          >
+            Our Purpose
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="vm-display text-5xl md:text-6xl font-medium text-base-content"
+          >
+            Vision &amp; Mission
+          </motion.h1>
+        </div>
+      </div>
+
       {/* ====================================== */}
       {/* HERO SECTION */}
       {/* ====================================== */}
-
-      <section
-        className="
-          relative
-          overflow-hidden
-          bg-linear-to-br
-          from-primary/10
-          via-base-100
-          to-secondary/10
-        "
-      >
-        <div className="absolute inset-0 opacity-20">
-          <div
-            className="
-              absolute
-              top-20
-              left-20
-              w-72
-              h-72
-              rounded-full
-              bg-primary
-              blur-3xl
-            "
-          ></div>
-
-          <div
-            className="
-              absolute
-              bottom-10
-              right-10
-              w-96
-              h-96
-              rounded-full
-              bg-secondary
-              blur-3xl
-            "
-          ></div>
+      <section className="relative overflow-hidden bg-linear-to-br from-primary/5 via-base-100 to-secondary/5">
+        <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
+          <div className="absolute -top-10 -left-10 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-secondary blur-3xl"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
+        <div className="relative max-w-6xl mx-auto px-6 py-20">
           <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.9,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            transition={{
-              duration: 0.6,
-            }}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
             className="flex justify-center mb-8"
           >
-            <div className="w-32 h-32 rounded-full overflow-hidden  shadow-xl bg-base-100 flex items-center justify-center">
-  <img
-    src={tihlogo}
-    alt="TIH"
-    className="w-full h-full object-cover rounded-full"
-  />
-</div>
+            <div className="w-28 h-28 rounded-full overflow-hidden shadow-lg bg-base-100 border border-base-300 flex items-center justify-center">
+              <img
+                src={tihlogo}
+                alt="TIH"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
           </motion.div>
 
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.7,
-            }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
             className="text-center"
           >
-            <h1 className="text-5xl md:text-7xl font-black mb-6 text-base-content">
+            <h2 className="vm-display text-3xl md:text-5xl font-medium text-base-content mb-6">
               {data.heroTitle}
-            </h1>
+            </h2>
 
-            <p
-              className="
-                max-w-4xl
-                mx-auto
-                text-lg
-                md:text-xl
-                text-base-content/70
-              "
-            >
+            <p className="max-w-3xl mx-auto text-lg text-base-content/65 leading-relaxed">
               {data.heroDescription}
             </p>
           </motion.div>
 
           {/* STATISTICS */}
-
-          <div className="grid md:grid-cols-4 gap-6 mt-16">
-            {[
-              {
-                number: "25+",
-                title:
-                  "Years Excellence",
-              },
-              {
-                number: "5000+",
-                title: "Students",
-              },
-              {
-                number: "100+",
-                title: "Faculty",
-              },
-              {
-                number: "100%",
-                title:
-                  "Commitment",
-              },
-            ].map(
-              (item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{
-                    opacity: 0,
-                    y: 20,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  transition={{
-                    delay:
-                      index * 0.1,
-                  }}
-                  className="
-                    bg-base-100/80
-                    backdrop-blur-lg
-                    rounded-3xl
-                    p-6
-                    shadow-lg
-                    text-center
-                    border border-base-300
-                  "
-                >
-                  <h2
-                    className="
-                      text-4xl
-                      font-black
-                      text-primary
-                    "
-                  >
-                    {item.number}
-                  </h2>
-
-                  <p className="mt-2 font-medium text-base-content">
-                    {item.title}
-                  </p>
-                </motion.div>
-              )
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 mt-16 divide-x divide-base-300 border-t border-b border-base-300">
+            {STATS.map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="text-center py-8 px-4"
+              >
+                <h3 className="vm-display text-4xl font-medium text-primary">
+                  {item.number}
+                </h3>
+                <p className="vm-eyebrow mt-3 text-base-content/55">
+                  {item.title}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -272,73 +240,39 @@ setData(res.data?.data || null);
       {/* ====================================== */}
       {/* VISION */}
       {/* ====================================== */}
-
       <section className="py-24 bg-base-100">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{
-                opacity: 0,
-                x: -50,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative"
             >
-              <div
-                className="
-                  bg-linear-to-br
-                  from-primary
-                  to-secondary
-                  rounded-[40px]
-                  h-112.5
-                  flex
-                  items-center
-                  justify-center
-                  shadow-2xl
-                "
-              >
-                <AcademicCapIcon className="w-40 h-40 text-white" />
+              <div className="hidden md:block absolute -top-4 -left-4 w-full h-full rounded-3xl border border-primary/25"></div>
+              <div className="relative bg-linear-to-br from-primary to-secondary rounded-3xl h-96 flex items-center justify-center shadow-xl">
+                <AcademicCapIcon
+                  className="w-32 h-32 text-primary-content/90"
+                  strokeWidth={1}
+                />
               </div>
             </motion.div>
 
             <motion.div
-              initial={{
-                opacity: 0,
-                x: 50,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
             >
-              <span className="badge badge-primary badge-lg mb-4">
-                OUR VISION
-              </span>
+              <SectionLabel>Our Vision</SectionLabel>
 
-              <h2 className="text-5xl font-black mb-6 text-base-content">
+              <h3 className="vm-display text-3xl md:text-4xl font-medium mb-8 text-base-content">
                 {data.visionTitle}
-              </h2>
+              </h3>
 
-              <div className="w-24 h-1 bg-primary rounded-full mb-8"></div>
-
-              <p
-                className="
-                  text-lg
-                  leading-relaxed
-                  text-base-content/80
-                "
-              >
-                {
-                  data.visionDescription
-                }
+              <p className="text-lg leading-relaxed text-base-content/75">
+                {data.visionDescription}
               </p>
             </motion.div>
           </div>
@@ -348,75 +282,40 @@ setData(res.data?.data || null);
       {/* ====================================== */}
       {/* MISSIONS */}
       {/* ====================================== */}
-
-      <section className="py-24 bg-base-200">
+      <section className="py-24 bg-base-200/60 border-y border-base-300">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black mb-4 text-base-content">
-              Our Mission
+            <SectionLabel align="center">Our Mission</SectionLabel>
+            <h2 className="vm-display text-3xl md:text-4xl font-medium mb-4 text-base-content">
+              Driving Excellence with Purpose
             </h2>
-
-            <p className="text-base-content/70">
-              Driving excellence
-              through focused goals
-              and meaningful action.
+            <p className="text-base-content/65 max-w-xl mx-auto">
+              Focused goals and meaningful action, guided by what matters
+              most to our students.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {data.missions?.map(
-              (
-                mission,
-                index
-              ) => (
-                <motion.div
-                  key={index}
-                  initial={{
-                    opacity: 0,
-                    y: 40,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  transition={{
-                    delay:
-                      index * 0.1,
-                  }}
-                  whileHover={{
-                    y: -10,
-                  }}
-                  className="
-                    bg-base-100
-                    rounded-3xl
-                    p-8
-                    shadow-xl
-                    hover:shadow-2xl
-                    transition-all
-                    border border-base-300
-                  "
-                >
-                  <div className="mb-6">
-                    {getMissionIcon(
-                      mission.icon
-                    )}
-                  </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {data.missions?.map((mission, index) => (
+              <motion.div
+                key={mission.title || index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="bg-base-100 rounded-2xl p-8 border border-base-300 hover:border-primary/40 transition-colors"
+              >
+                <div className="mb-6">{getMissionIcon(mission.icon)}</div>
 
-                  <h3 className="text-2xl font-bold mb-4 text-base-content">
-                    {mission.title}
-                  </h3>
+                <h3 className="vm-display text-xl font-medium mb-3 text-base-content">
+                  {mission.title}
+                </h3>
 
-                  <p className="text-base-content/70 leading-relaxed">
-                    {
-                      mission.description
-                    }
-                  </p>
-                </motion.div>
-              )
-            )}
+                <p className="text-base-content/65 leading-relaxed text-[0.95rem]">
+                  {mission.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -424,79 +323,34 @@ setData(res.data?.data || null);
       {/* ====================================== */}
       {/* CORE VALUES */}
       {/* ====================================== */}
-
       <section className="py-24 bg-base-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black text-base-content">
+            <SectionLabel align="center">What Guides Us</SectionLabel>
+            <h2 className="vm-display text-3xl md:text-4xl font-medium text-base-content">
               Core Values
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: TrophyIcon,
-                title:
-                  "Excellence",
-              },
-              {
-                icon: SparklesIcon,
-                title:
-                  "Innovation",
-              },
-              {
-                icon:
-                  ShieldCheckIcon,
-                title:
-                  "Integrity",
-              },
-              {
-                icon:
-                  UserGroupIcon,
-                title:
-                  "Leadership",
-              },
-            ].map(
-              (item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.9,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    scale: 1,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  className="
-                    bg-base-200
-                    rounded-3xl
-                    p-8
-                    text-center
-                    shadow-lg
-                    border border-base-300
-                  "
-                >
-                  <item.icon
-                    className="
-                      w-14
-                      h-14
-                      mx-auto
-                      text-primary
-                      mb-5
-                    "
-                  />
-
-                  <h3 className="text-xl font-bold text-base-content">
-                    {item.title}
-                  </h3>
-                </motion.div>
-              )
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-base-300 border-t border-b border-base-300">
+            {CORE_VALUES.map((item) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-center py-10 px-4"
+              >
+                <item.icon
+                  className="w-10 h-10 mx-auto text-primary mb-4"
+                  strokeWidth={1.5}
+                />
+                <h3 className="vm-eyebrow text-base-content/75">
+                  {item.title}
+                </h3>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -504,28 +358,19 @@ setData(res.data?.data || null);
       {/* ====================================== */}
       {/* CTA */}
       {/* ====================================== */}
+      <section className="py-24 bg-linear-to-r from-primary to-secondary text-primary-content">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <SectionLabel align="center" light>
+            Get Started
+          </SectionLabel>
 
-      <section
-        className="
-          py-24
-          bg-linear-to-r
-          from-primary
-          to-secondary
-          text-primary-content
-        "
-      >
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-5xl font-black mb-6">
-            Join Our Academic
-            Journey
+          <h2 className="vm-display text-3xl md:text-5xl font-medium mb-6">
+            Join Our Academic Journey
           </h2>
 
-          <p className="text-xl text-primary-content/80 mb-10">
-            Empowering students
-            with knowledge,
-            innovation, and
-            leadership for a
-            brighter future.
+          <p className="text-lg text-primary-content/80 mb-10 leading-relaxed">
+            Empowering students with knowledge, innovation, and leadership
+            for a brighter future.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
@@ -533,15 +378,9 @@ setData(res.data?.data || null);
               Explore Programs
             </Link>
 
-            <Link 
+            <Link
               to="/contact"
-              className="
-                btn
-                btn-outline
-                text-white
-                border-white
-                hover:text-black
-              "
+              className="btn btn-outline text-primary-content border-primary-content/60 hover:bg-primary-content hover:text-primary hover:border-primary-content"
             >
               Contact Us
             </Link>
@@ -549,6 +388,5 @@ setData(res.data?.data || null);
         </div>
       </section>
     </div>
-    </>
   );
 }
