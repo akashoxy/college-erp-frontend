@@ -20,11 +20,11 @@ import tihlogo from "../../assets/images/tih-logo.png";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const SOCIAL_LINKS = [
-  { icon: <FaFacebookF />, label: "Facebook", url: "#" },
+  { icon: <FaFacebookF />, label: "Facebook", url: "https://www.facebook.com/technoindiahooghly/" },
   { icon: <FaWhatsapp />, label: "WhatsApp", url: "#" },
-  { icon: <FaTwitter />, label: "Twitter", url: "#" },
+  { icon: <FaTwitter />, label: "Twitter", url: "https://x.com/TIHooghly" },
   { icon: <FaPinterestP />, label: "Pinterest", url: "#" },
-  { icon: <FaLinkedinIn />, label: "LinkedIn", url: "#" },
+  { icon: <FaLinkedinIn />, label: "LinkedIn", url: "https://www.linkedin.com/company/tchooghly/" },
 ];
 
 /**
