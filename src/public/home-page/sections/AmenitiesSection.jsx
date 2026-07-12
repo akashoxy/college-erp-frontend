@@ -4,11 +4,10 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
 import api from "../../../services/api";
 
-import raggingImg from "../../../assets/amenities/wifi2.png";
+import raggingImg from "../../../assets/images/ragging.png";
 import wifiImg from "../../../assets/amenities/wifi2.png";
 import radioImg from "../../../assets/amenities/radio2.png";
-import libraryImg from "../../../assets/amenities/radio2.png";
-import labImg from "../../../assets/amenities/radio2.png";
+import smartImg from "../../../assets/images/smart.png";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -29,8 +28,7 @@ function AmenitiesSection() {
   };
 
   const amenities = [
-    { title: "Central Library", image: libraryImg },
-    { title: "Computer Laboratory", image: labImg },
+    { title: "Smart Class", image: smartImg },
     { title: "Radio TIH", image: radioImg },
     { title: "Campus Wi-Fi", image: wifiImg },
     { title: "Ragging Free Campus", image: raggingImg },
@@ -40,55 +38,116 @@ function AmenitiesSection() {
     <section className="py-14 md:py-18 bg-base-100">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* ==================== CAMPUS AMENITIES ==================== */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="text-center mb-16"
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.5 }}
+  transition={{ duration: 0.6, ease: EASE }}
+  className="text-center mb-16"
+>
+  <span className="inline-flex items-center gap-3 text-primary font-semibold text-xs tracking-[0.35em] uppercase">
+    <span className="h-px w-8 bg-primary/50" />
+    Student Facilities
+    <span className="h-px w-8 bg-primary/50" />
+  </span>
+
+  <h2 className="font-serif text-4xl md:text-5xl font-semibold mt-5 text-primary tracking-tight">
+    Campus Amenities
+  </h2>
+
+  <p className="mt-4 text-base-content/60 max-w-3xl mx-auto text-sm md:text-base">
+    Modern facilities designed to support learning, innovation,
+    creativity and student well-being.
+  </p>
+</motion.div>
+
+<div className="flex flex-wrap justify-center gap-6 mb-24">
+  {amenities.map((item, index) => (
+    <motion.div
+      key={item.title}
+      initial={{ opacity: 0, y: 40, scale: 0.8 }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+          duration: 0.55,
+          delay: index * 0.09,
+          ease: [0.34, 1.56, 0.64, 1],
+        },
+      }}
+      viewport={{ once: true, amount: 0.3 }}
+      whileHover={{
+        y: -10,
+        scale: 1.04,
+        transition: { duration: 0.3, ease: EASE },
+      }}
+      className="group relative w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(20%-1.2rem)] max-w-[180px] bg-base-100 rounded-3xl border border-base-300/60 hover:border-primary/40 shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 p-6 flex flex-col items-center text-center overflow-hidden"
+    >
+      {/* pulsing glow that breathes even before hover */}
+      <motion.div
+        animate={{ opacity: [0.15, 0.35, 0.15] }}
+        transition={{
+          duration: 2.6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: index * 0.2,
+        }}
+        className="pointer-events-none absolute -inset-6 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-0"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      <div className="relative w-24 h-24 shrink-0 mx-auto">
+        {/* dashed ring: idle slow spin, speeds up on hover */}
+        <svg
+          viewBox="0 0 100 100"
+          className="absolute inset-0 w-full h-full text-primary/25 animate-[spin_18s_linear_infinite] group-hover:text-primary/50 group-hover:[animation-duration:3s] transition-colors duration-500"
         >
-          <span className="inline-flex items-center gap-3 text-primary font-semibold text-xs tracking-[0.35em] uppercase">
-            <span className="h-px w-8 bg-primary/50" />
-            Student Facilities
-            <span className="h-px w-8 bg-primary/50" />
-          </span>
+          <circle
+            cx="50"
+            cy="50"
+            r="47"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeDasharray="3 7"
+          />
+        </svg>
 
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold mt-5 text-primary tracking-tight">
-            Campus Amenities
-          </h2>
-
-          <p className="mt-4 text-base-content/60 max-w-3xl mx-auto text-sm md:text-base">
-            Modern facilities designed to support learning, innovation,
-            creativity and student well-being.
-          </p>
+        <motion.div
+          animate={{ y: [0, -5, 0] }}
+          transition={{
+            duration: 3 + (index % 3) * 0.4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: index * 0.15,
+          }}
+          className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden bg-base-200 ring-1 ring-primary/15 group-hover:ring-primary/50 group-hover:ring-2 transition-all duration-500"
+        >
+          <img
+            src={item.image}
+            alt={item.title}
+            className="block mx-auto w-full h-full object-contain object-center p-3 group-hover:scale-[1.15] group-hover:-rotate-6 transition-transform duration-500 ease-out"
+          />
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-24">
-          {amenities.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
-              className="group bg-base-100 rounded-3xl border border-base-300/60 hover:border-primary/30 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 p-6 flex flex-col items-center text-center"
-            >
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-base-200 ring-1 ring-primary/15 group-hover:ring-primary/40 transition-all duration-500">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-contain p-3 group-hover:scale-105 transition-all duration-500"
-                />
-              </div>
+        {/* small accent dot that pops in on hover, top-right of the circle */}
+        <motion.span
+          initial={{ scale: 0 }}
+          whileHover={{}}
+          className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary scale-0 group-hover:scale-100 transition-transform duration-300 ease-out ring-2 ring-base-100"
+        />
+      </div>
 
-              <h3 className="mt-5 font-semibold text-base-content text-[15px] group-hover:text-primary transition-colors duration-300">
-                {item.title}
-              </h3>
+      <h3 className="relative mt-5 font-semibold text-base-content text-[15px] group-hover:text-primary transition-colors duration-300">
+        {item.title}
+      </h3>
 
-              <div className="mt-3 h-px w-6 bg-primary/40 group-hover:w-12 transition-all duration-500" />
-            </motion.div>
-          ))}
-        </div>
+      <div className="relative mt-3 h-px w-6 bg-primary/40 group-hover:w-12 transition-all duration-500" />
+    </motion.div>
+  ))}
+</div>
+  
 
         {/* ==================== APPROVALS ==================== */}
         <motion.div
