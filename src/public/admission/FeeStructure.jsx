@@ -144,7 +144,7 @@ const FeeStructure = () => {
 
   // Reset the collapse open whenever the selected program changes
   useEffect(() => {
-    setSemesterOpen(true);
+    setSemesterOpen(false);
   }, [selectedStream?._id]);
 
   const loadData = async () => {
@@ -336,15 +336,7 @@ const FeeStructure = () => {
                   <div className="card bg-base-100 border border-base-300 p-7 relative overflow-hidden">
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                       <div>
-                        <div
-                          className="avatar placeholder mb-4"
-                        >
-                          <div className="w-11 rounded-full border-2 border-primary text-primary bg-transparent">
-                            <span className="text-lg font-semibold" style={display}>
-                              {selectedStream.stream.slice(0, 1)}
-                            </span>
-                          </div>
-                        </div>
+                        
                         <h2
                           className="text-3xl font-semibold text-base-content"
                           style={display}
