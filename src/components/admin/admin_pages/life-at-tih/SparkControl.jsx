@@ -145,9 +145,15 @@ export default function SparkControl() {
 
           const data = res.data.data || {};
 
-setForm({
+          setForm({
   ...initialForm,
   ...data,
+
+  whyParticipate:
+    data.whyParticipate?.map((card) => ({
+      ...card,
+      imagePreview: "",
+    })) || [],
 
   startDate: data.startDate
     ? data.startDate.split("T")[0]
@@ -157,8 +163,7 @@ setForm({
     ? data.endDate.split("T")[0]
     : "",
 
-  heroImagePreview:
-    data.heroImage || "",
+  heroImagePreview: data.heroImage || "",
 });
 
         }
@@ -222,7 +227,7 @@ setForm({
 
     };
 
-    const handleHeroImage = (e) => {
+  const handleHeroImage = (e) => {
   const file = e.target.files[0];
 
   if (!file) return;
@@ -230,9 +235,29 @@ setForm({
   setForm((prev) => ({
     ...prev,
     heroImage: file,
-    heroImagePreview:
-      URL.createObjectURL(file),
+    heroImagePreview: URL.createObjectURL(file),
   }));
+};
+
+const handleWhyCardImage = (index, e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  setForm((prev) => {
+    const updated = [...prev.whyParticipate];
+
+    updated[index] = {
+      ...updated[index],
+      image: file,
+      imagePreview: URL.createObjectURL(file),
+    };
+
+    return {
+      ...prev,
+      whyParticipate: updated,
+    };
+  });
 };
 
   /* ==========================================================
@@ -292,10 +317,27 @@ setForm({
     formData.append("gamingArena", form.gamingArena);
     formData.append("techTalks", form.techTalks);
 
+    const whyParticipate = form.whyParticipate.map((card) => ({
+  title: card.title,
+  image:
+    card.image instanceof File
+      ? ""
+      : card.image,
+}));
+
+formData.append(
+  "whyParticipate",
+  JSON.stringify(whyParticipate)
+);
+
+form.whyParticipate.forEach((card) => {
+  if (card.image instanceof File) {
     formData.append(
-      "whyParticipate",
-      JSON.stringify(form.whyParticipate)
+      "whyImages",
+      card.image
     );
+  }
+});
 
     if (form.heroImage instanceof File) {
       formData.append(
@@ -437,9 +479,10 @@ setForm({
             ...(prev.whyParticipate || []),
 
             {
-              title: "",
-              image: "",
-            },
+    title: "",
+    image: "",
+    imagePreview: "",
+}
 
           ],
 
@@ -1260,18 +1303,11 @@ setForm({
                               </label>
 
                               <input
-                                type="text"
-                                value={card.image}
-                                onChange={(e) =>
-                                  updateWhyCard(
-                                    index,
-                                    "image",
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="https://..."
-                                className="input input-bordered w-full"
-                              />
+    type="file"
+    accept="image/*,.gif"
+    onChange={(e) => handleWhyCardImage(index, e)}
+    className="file-input file-input-bordered w-full"
+/>
 
                             </div>
 
@@ -1281,7 +1317,7 @@ setForm({
                               IMAGE PREVIEW
                           ========================================================== */}
 
-                          {card.image && (
+                         {(card.imagePreview || card.image) && (
 
                             <motion.div
                               initial={{
@@ -1294,7 +1330,7 @@ setForm({
                             >
 
                               <img
-                                src={card.image}
+                                src={card.imagePreview || card.image}
                                 alt={
                                   card.title ||
                                   "Preview"
@@ -1607,7 +1643,7 @@ setForm({
                                 {card.image ? (
 
                                   <img
-                                    src={card.image}
+                                    src={card.imagePreview || card.image}
                                     alt={
                                       card.title
                                     }
