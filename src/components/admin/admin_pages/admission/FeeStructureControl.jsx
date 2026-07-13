@@ -407,7 +407,7 @@ export default function FeeStructureControl() {
       >
         {/* ================= HERO ================= */}
 
-        <div className="bg-[#142238] text-[#F3F0E6]">
+        <div className="bg-primary text-[#F3F0E6]">
           <div className="max-w-5xl mx-auto px-6 py-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -505,7 +505,7 @@ export default function FeeStructureControl() {
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[#142238] rounded-xl p-6 flex items-center justify-between"
+            className="bg-primary rounded-xl p-6 flex items-center justify-between"
           >
             <h3 className="text-[#F3F0E6] font-semibold flex items-center gap-2" style={display}>
               <IndianRupee size={18} className="text-[#D9BE6E]" />
@@ -522,12 +522,7 @@ export default function FeeStructureControl() {
             <div className="divide-y divide-[#EAE4D3]">
               {formData.semesterFees.map((semester, index) => (
                 <div key={index} className="flex items-center gap-4 py-3">
-                  <div className="w-36 shrink-0 flex items-center flex-wrap gap-y-1">
-                    <span className="text-sm font-medium text-[#142238]">
-                      {semester.semester}
-                    </span>
-                    {index === 0 && <Stamp />}
-                  </div>
+                  
                   <input
                     type="text"
                     inputMode="numeric"
@@ -536,6 +531,12 @@ export default function FeeStructureControl() {
                     value={semester.amount}
                     onChange={(e) => handleSemesterAmount(index, e.target.value)}
                   />
+                  <div className="w-36 shrink-0 flex items-center flex-wrap gap-y-1">
+                    <span className="text-sm font-medium text-[#142238]">
+                      {semester.semester}
+                    </span>
+                    {index === 0 && <Stamp />}
+                  </div>
                 </div>
               ))}
             </div>
@@ -728,7 +729,7 @@ export default function FeeStructureControl() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="max-w-5xl mx-auto bg-[#142238] rounded-xl shadow-2xl px-6 py-4 flex flex-col lg:flex-row items-center justify-between gap-4"
+            className="max-w-5xl mx-auto bg-primary rounded-xl shadow-2xl px-6 py-4 flex flex-col lg:flex-row items-center justify-between gap-4"
           >
             <div className="text-center lg:text-left">
               <h3 className="font-semibold text-[#F3F0E6]" style={display}>
