@@ -9,13 +9,7 @@ import {
 
 const AccessibilityContext = createContext();
 
-export const AccessibilityProvider = ({
-  children,
-}) => {
-  /* ============================
-      DEFAULT SETTINGS
-  ============================ */
-
+export const AccessibilityProvider = ({ children }) => {
   const defaultSettings = {
     fontSize: 100,
     highContrast: false,
@@ -23,353 +17,235 @@ export const AccessibilityProvider = ({
     reading: false,
   };
 
-  /* ============================
-      LOAD SETTINGS
-  ============================ */
+  const [settings, setSettings] = useState(() => {
+    if (typeof window === "undefined") return defaultSettings;
 
-  const [settings, setSettings] =
-    useState(() => {
-      if (
-        typeof window === "undefined"
-      ) {
-        return defaultSettings;
-      }
-
-      try {
-        const saved =
-          localStorage.getItem(
-            "tih_accessibility"
-          );
-
-        return saved
-          ? JSON.parse(saved)
-          : defaultSettings;
-      } catch (error) {
-        console.error(
-          "Accessibility settings error:",
-          error
-        );
-
-        return defaultSettings;
-      }
-    });
+    try {
+      const saved = localStorage.getItem("tih_accessibility");
+      return saved ? JSON.parse(saved) : defaultSettings;
+    } catch (error) {
+      console.error("Accessibility settings error:", error);
+      return defaultSettings;
+    }
+  });
 
   const utteranceRef = useRef(null);
-
-  /* ============================
-      SAVE SETTINGS
-  ============================ */
+  const keepAliveRef = useRef(null);
 
   useEffect(() => {
-    if (
-      typeof window === "undefined"
-    ) {
-      return;
-    }
-
-    localStorage.setItem(
-      "tih_accessibility",
-      JSON.stringify(settings)
-    );
+    if (typeof window === "undefined") return;
+    localStorage.setItem("tih_accessibility", JSON.stringify(settings));
   }, [settings]);
 
-  /* ============================
-      FONT SIZE
-  ============================ */
-
   useEffect(() => {
-    if (
-      typeof document === "undefined"
-    ) {
-      return;
-    }
-
-    document.documentElement.style.fontSize =
-      `${settings.fontSize}%`;
+    if (typeof document === "undefined") return;
+    document.documentElement.style.fontSize = `${settings.fontSize}%`;
   }, [settings.fontSize]);
 
-  /* ============================
-      HIGH CONTRAST
-  ============================ */
-
   useEffect(() => {
-    if (
-      typeof document === "undefined"
-    ) {
-      return;
-    }
-
-    document.body.classList.toggle(
-      "accessibility-high-contrast",
-      settings.highContrast
-    );
+    if (typeof document === "undefined") return;
+    document.body.classList.toggle("accessibility-high-contrast", settings.highContrast);
   }, [settings.highContrast]);
 
-  /* ============================
-      HIDE IMAGES
-  ============================ */
-
   useEffect(() => {
-    if (
-      typeof document === "undefined"
-    ) {
-      return;
-    }
-
-    document.body.classList.toggle(
-      "accessibility-hide-images",
-      settings.hideImages
-    );
+    if (typeof document === "undefined") return;
+    document.body.classList.toggle("accessibility-hide-images", settings.hideImages);
   }, [settings.hideImages]);
-
-  /* ============================
-      CLEANUP
-  ============================ */
 
   useEffect(() => {
     return () => {
-      if (
-        typeof window !==
-          "undefined" &&
-        "speechSynthesis" in window
-      ) {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
 
   /* ============================
-      SPEECH
+      READ MAIN CONTENT ONLY
+      (skips navbar/header/footer)
   ============================ */
+  const getReadableText = () => {
+    const main =
+      document.getElementById("main-content") ||
+      document.querySelector("main");
 
-  const startReading = () => {
-    if (
-      typeof window ===
-        "undefined" ||
-      !(
-        "speechSynthesis" in window
-      ) ||
-      !(
-        "SpeechSynthesisUtterance" in
-        window
+    if (main) return main.innerText;
+
+    // Fallback if there's no <main> or #main-content:
+    // clone the body and strip nav/header/footer
+    const clone = document.body.cloneNode(true);
+    clone
+      .querySelectorAll(
+        "nav, header, footer, [role='navigation'], [data-no-read]"
       )
-    ) {
-      return;
+      .forEach((el) => el.remove());
+
+    return clone.innerText;
+  };
+
+  const clearKeepAlive = () => {
+    if (keepAliveRef.current) {
+      clearInterval(keepAliveRef.current);
+      keepAliveRef.current = null;
     }
+  };
 
-    window.speechSynthesis.cancel();
-
-    const text =
-      document.body.innerText;
-
-    if (!text.trim()) return;
-
-    const utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
+  const speakText = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
 
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
 
     utterance.onend = () => {
-      setSettings((prev) => ({
-        ...prev,
-        reading: false,
-      }));
+      clearKeepAlive();
+      setSettings((prev) => ({ ...prev, reading: false }));
     };
 
     utterance.onerror = () => {
-      setSettings((prev) => ({
-        ...prev,
-        reading: false,
-      }));
+      clearKeepAlive();
+      setSettings((prev) => ({ ...prev, reading: false }));
     };
 
-    utteranceRef.current =
-      utterance;
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
 
-    window.speechSynthesis.speak(
-      utterance
-    );
+    // Android Chrome bug workaround: speech silently
+    // cuts out after ~15s unless "pinged" periodically
+    clearKeepAlive();
+    keepAliveRef.current = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearKeepAlive();
+        return;
+      }
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    }, 10000);
 
-    setSettings((prev) => ({
-      ...prev,
-      reading: true,
-    }));
+    setSettings((prev) => ({ ...prev, reading: true }));
   };
 
-  const pauseReading = () => {
+  const startReading = () => {
     if (
-      typeof window ===
-        "undefined" ||
-      !(
-        "speechSynthesis" in window
-      )
-    ) {
-      return;
-    }
-
-    window.speechSynthesis.pause();
-  };
-
-  const resumeReading = () => {
-    if (
-      typeof window ===
-        "undefined" ||
-      !(
-        "speechSynthesis" in window
-      )
-    ) {
-      return;
-    }
-
-    window.speechSynthesis.resume();
-  };
-
-  const stopReading = () => {
-    if (
-      typeof window ===
-        "undefined" ||
-      !(
-        "speechSynthesis" in window
-      )
+      typeof window === "undefined" ||
+      !("speechSynthesis" in window) ||
+      !("SpeechSynthesisUtterance" in window)
     ) {
       return;
     }
 
     window.speechSynthesis.cancel();
 
-    utteranceRef.current = null;
+    const text = getReadableText();
+    if (!text.trim()) return;
 
-    setSettings((prev) => ({
-      ...prev,
-      reading: false,
-    }));
+    // iOS Safari fix: voices list can be empty on the
+    // very first call, which makes speak() fail silently.
+    const voices = window.speechSynthesis.getVoices();
+
+    if (voices.length === 0) {
+      const handleVoicesChanged = () => {
+        window.speechSynthesis.removeEventListener(
+          "voiceschanged",
+          handleVoicesChanged
+        );
+        speakText(text);
+      };
+
+      window.speechSynthesis.addEventListener(
+        "voiceschanged",
+        handleVoicesChanged
+      );
+
+      // Safety net in case the event never fires
+      setTimeout(() => {
+        if (!window.speechSynthesis.speaking) {
+          speakText(text);
+        }
+      }, 300);
+
+      return;
+    }
+
+    speakText(text);
   };
 
-  /* ============================
-      FONT CONTROLS
-  ============================ */
+  const pauseReading = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.pause();
+  };
+
+  const resumeReading = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.resume();
+  };
+
+  const stopReading = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.cancel();
+    clearKeepAlive();
+    utteranceRef.current = null;
+
+    setSettings((prev) => ({ ...prev, reading: false }));
+  };
 
   const increaseFont = () => {
-    setSettings((prev) => ({
-      ...prev,
-      fontSize: Math.min(
-        prev.fontSize + 10,
-        180
-      ),
-    }));
+    setSettings((prev) => ({ ...prev, fontSize: Math.min(prev.fontSize + 10, 180) }));
   };
 
   const decreaseFont = () => {
-    setSettings((prev) => ({
-      ...prev,
-      fontSize: Math.max(
-        prev.fontSize - 10,
-        80
-      ),
-    }));
+    setSettings((prev) => ({ ...prev, fontSize: Math.max(prev.fontSize - 10, 80) }));
   };
 
-  /* ============================
-      TOGGLES
-  ============================ */
+  const toggleHighContrast = () => {
+    setSettings((prev) => ({ ...prev, highContrast: !prev.highContrast }));
+  };
 
-  const toggleHighContrast =
-    () => {
-      setSettings((prev) => ({
-        ...prev,
-        highContrast:
-          !prev.highContrast,
-      }));
-    };
+  const toggleHideImages = () => {
+    setSettings((prev) => ({ ...prev, hideImages: !prev.hideImages }));
+  };
 
-  const toggleHideImages =
-    () => {
-      setSettings((prev) => ({
-        ...prev,
-        hideImages:
-          !prev.hideImages,
-      }));
-    };
+  const resetAccessibility = () => {
+    stopReading();
+    setSettings(defaultSettings);
 
-  /* ============================
-      RESET
-  ============================ */
-
-  const resetAccessibility =
-    () => {
-      stopReading();
-
-      setSettings(defaultSettings);
-
-      if (
-        typeof document !==
-        "undefined"
-      ) {
-        document.documentElement.style.fontSize =
-          "100%";
-
-        document.body.classList.remove(
-          "accessibility-high-contrast"
-        );
-
-        document.body.classList.remove(
-          "accessibility-hide-images"
-        );
-      }
-    };
-
-  /* ============================
-      CONTEXT VALUE
-  ============================ */
+    if (typeof document !== "undefined") {
+      document.documentElement.style.fontSize = "100%";
+      document.body.classList.remove("accessibility-high-contrast");
+      document.body.classList.remove("accessibility-hide-images");
+    }
+  };
 
   const value = useMemo(
     () => ({
       settings,
-
       increaseFont,
       decreaseFont,
-
       toggleHighContrast,
       toggleHideImages,
-
       startReading,
       pauseReading,
       resumeReading,
       stopReading,
-
       resetAccessibility,
     }),
     [settings]
   );
 
   return (
-    <AccessibilityContext.Provider
-      value={value}
-    >
+    <AccessibilityContext.Provider value={value}>
       {children}
-
-      
     </AccessibilityContext.Provider>
   );
 };
 
-export const useAccessibility =
-  () => {
-    const context =
-      useContext(
-        AccessibilityContext
-      );
+export const useAccessibility = () => {
+  const context = useContext(AccessibilityContext);
 
-    if (!context) {
-      throw new Error(
-        "useAccessibility must be used inside AccessibilityProvider."
-      );
-    }
+  if (!context) {
+    throw new Error("useAccessibility must be used inside AccessibilityProvider.");
+  }
 
-    return context;
-  };
-
+  return context;
+};
