@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import tihlogo from "../../assets/images/tih-logo.png";
-import heroImg from "../../assets/images/tih-logo.png";
+import heroImg from "../../assets/calendar/canteen.png";
 import menuImg from "../../assets/calendar/canteen.png";
 import ragging from "../../assets/images/ragging.png";
 import radio from "../../assets/images/radio.png";
