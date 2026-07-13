@@ -173,7 +173,17 @@ export default function AdmissionProcedure() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
-              className="modal-box max-w-2xl rounded-sm p-0 overflow-hidden border border-base-300 bg-base-100"
+              className="
+      modal-box
+      max-w-2xl
+      max-h-[90vh]
+      overflow-y-auto
+      rounded-sm
+      p-0
+      border
+      border-base-300
+      bg-base-100
+    "
             >
               {/* header */}
               <div className="bg-neutral text-neutral-content p-8">
