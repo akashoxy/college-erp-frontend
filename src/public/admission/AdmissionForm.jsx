@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import api from "../../services/api";
 
 import tihLogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 function AdmissionForm() {
   const [loading, setLoading] = useState(false);
@@ -286,7 +287,7 @@ function AdmissionForm() {
 
         </div>
       </div>
-
+                  <LogoStrip/>
     </>
   );
 }

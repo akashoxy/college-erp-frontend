@@ -15,6 +15,7 @@ import {
   FaBook,
   FaUniversity,
 } from "react-icons/fa";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function PreviousQuestionPapers() {
   const [papers, setPapers] = useState([]);
@@ -766,7 +767,7 @@ setPapers(data.data || []);
         </div>
 
       </section>
-
+            <LogoStrip/>
 
     </>
   );

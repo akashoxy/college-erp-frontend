@@ -11,6 +11,7 @@ import {
   Clock3,
   BadgeCheck,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 
 const fadeUp = {
@@ -72,7 +73,7 @@ if (!data) {
 }
 
   return (
-    
+    <>
     <div className="bg-base-200">
 
       {/* ====================================================== */}
@@ -770,6 +771,8 @@ if (!data) {
       </section>
 
     </div>
+    <LogoStrip/>
+    </>
   );
 };
 

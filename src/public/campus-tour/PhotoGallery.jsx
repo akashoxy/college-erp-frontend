@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Image as ImageIcon,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 
 export default function PhotoGallery() {
@@ -900,7 +901,7 @@ export default function PhotoGallery() {
         )}
 
       </AnimatePresence>
-
+        <LogoStrip/>
     </>
   );
 }

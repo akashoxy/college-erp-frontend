@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 
 import tihlogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function Webmagazine() {
   const [magazines, setMagazines] = useState([]);
@@ -690,7 +691,7 @@ export default function Webmagazine() {
           )}
         </div>
       </section>
-
+      <LogoStrip/>
     </>
   );
 }

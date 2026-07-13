@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { motion } from "framer-motion";
+import LogoStrip from "../../styles/Logostrip";
 
 
 
@@ -659,7 +660,7 @@ setData(res.data.data);
 
       </div>
 
-    
+    <LogoStrip/>
 
     </>
   );

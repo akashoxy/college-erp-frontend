@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -18,6 +19,8 @@ import {
   Award,
   ImagePlus,
   X,
+  Check,
+  Loader2,
 } from "lucide-react";
 
 import api from "../../../../services/api";
@@ -51,6 +54,10 @@ const formatDisplayDate = (value) => {
     day: "numeric",
   });
 };
+
+// How long to wait after the last edit before auto-saving basic info,
+// highlights, and timeline to the backend.
+const AUTOSAVE_DELAY_MS = 900;
 
 /* ==========================================================
    INITIAL STATES
@@ -108,7 +115,14 @@ export default function SportsControl() {
   ========================================================== */
 
   const [loading, setLoading] = useState(true);
+
+  // Manual "Save Now" state (only used if the user clicks the manual
+  // save buttons, e.g. right after choosing a hero image).
   const [saving, setSaving] = useState(false);
+
+  // Background autosave status, shown as a small inline indicator
+  // instead of a blocking modal: "idle" | "saving" | "saved" | "error"
+  const [autoSaveStatus, setAutoSaveStatus] = useState("idle");
 
   /* ==========================================================
      MODALS
@@ -149,7 +163,7 @@ export default function SportsControl() {
   const [sportsData, setSportsData] = useState(initialSportsData);
 
   const [heroPreview, setHeroPreview] = useState("");
-  const [heroImageFile, setHeroImageFile] = useState(null);
+  const [savingHeroImage, setSavingHeroImage] = useState(false);
 
   const [eventSearch, setEventSearch] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
@@ -168,6 +182,18 @@ export default function SportsControl() {
   const [savingAchievement, setSavingAchievement] = useState(false);
 
   /* ==========================================================
+     AUTOSAVE GUARDS / TIMERS
+  ========================================================== */
+
+  // Whenever we programmatically overwrite `sportsData` (initial load,
+  // manual refresh, delete-all reset, or a refetch after saving), we
+  // don't want that state change to itself trigger another autosave.
+  // This ref is checked (and reset) inside the autosave effect.
+  const skipAutoSaveRef = useRef(true);
+
+  const autoSaveTimeoutRef = useRef(null);
+
+  /* ==========================================================
      FETCH DATA
   ========================================================== */
 
@@ -178,6 +204,10 @@ export default function SportsControl() {
       const res = await api.get("/annual-sports-meet");
 
       const data = res.data.data || initialSportsData;
+
+      // This update is programmatic (came from the server), not a user
+      // edit, so the next autosave effect run must be skipped.
+      skipAutoSaveRef.current = true;
 
       setSportsData({
         ...initialSportsData,
@@ -201,65 +231,124 @@ export default function SportsControl() {
 
   useEffect(() => {
     fetchSportsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ==========================================================
      HERO IMAGE
   ========================================================== */
 
-  const handleHeroImageChange = (e) => {
+  const handleHeroImageChange = async (e) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
+
+    const previousPreview = heroPreview;
 
     if (heroPreview?.startsWith("blob:")) {
       URL.revokeObjectURL(heroPreview);
     }
 
-    setHeroImageFile(file);
-    setHeroPreview(URL.createObjectURL(file));
+    const localPreviewUrl = URL.createObjectURL(file);
+    setHeroPreview(localPreviewUrl);
+
+    // Hero image is uploaded immediately, to its own dedicated
+    // endpoint (PUT /hero-image), which only ever touches
+    // heroImage/heroImagePublicId server-side. It deliberately does
+    // NOT go through the shared basic-info autosave/payload, so it
+    // can never race with or overwrite sportsEvents/achievements/
+    // highlights/timeline, no matter what else is happening in the
+    // form at the same time.
+    try {
+      setSavingHeroImage(true);
+
+      const formData = new FormData();
+      formData.append("heroImage", file);
+
+      const res = await api.put(
+        "/annual-sports-meet/hero-image",
+        formData,
+        { timeout: 30000 } // fail loudly instead of hanging forever
+      );
+
+      const updated = res.data.data;
+
+      setSportsData((prev) => ({
+        ...prev,
+        heroImage: updated?.heroImage || prev.heroImage,
+      }));
+
+      setHeroPreview(updated?.heroImage || localPreviewUrl);
+
+      notify("success", "Success", res.data.message);
+    } catch (error) {
+      // Roll back the preview on failure so the UI doesn't show an
+      // image that was never actually saved.
+      setHeroPreview(previousPreview);
+
+      notify(
+        "error",
+        "Upload Failed",
+        error.response?.data?.message ||
+          "Failed to update hero image."
+      );
+    } finally {
+      URL.revokeObjectURL(localPreviewUrl);
+      setSavingHeroImage(false);
+    }
   };
 
-
-
   /* ==========================================================
-     SAVE BASIC INFORMATION
+     SAVE BASIC INFORMATION (shared by autosave + manual buttons)
   ========================================================== */
 
+  const persistBasicInformation = async (
+    dataToSave,
+    { silent = false } = {}
+  ) => {
+    const formData = new FormData();
+
+    formData.append("heroSubtitle", dataToSave.heroSubtitle || "");
+    formData.append("aboutText", dataToSave.aboutText || "");
+    formData.append("startDate", dataToSave.startDate || "");
+    formData.append("endDate", dataToSave.endDate || "");
+    formData.append("venue", dataToSave.venue || "");
+    formData.append("registerLink", dataToSave.registerLink || "");
+    formData.append("ctaTitle", dataToSave.ctaTitle || "");
+    formData.append("ctaDescription", dataToSave.ctaDescription || "");
+
+    formData.append(
+      "highlights",
+      JSON.stringify(dataToSave.highlights || [])
+    );
+
+    formData.append(
+      "timeline",
+      JSON.stringify(dataToSave.timeline || [])
+    );
+
+    // Note: heroImage is intentionally NEVER sent from here. It has
+    // its own dedicated endpoint (handleHeroImageChange →
+    // PUT /hero-image) so this save can never touch it, and vice versa.
+    const res = await api.put("/annual-sports-meet", formData);
+
+    if (!silent) {
+      notify("success", "Success", res.data.message);
+    }
+
+    return res;
+  };
+
+  // Manual "Save Now" button handler (kept as a fallback / immediate save).
   const saveBasicInformation = async () => {
     try {
       setSaving(true);
 
-      const formData = new FormData();
+      // A manual save should not be re-triggered by the autosave effect
+      // once state updates as a result of it.
+      skipAutoSaveRef.current = true;
 
-      formData.append("heroSubtitle", sportsData.heroSubtitle);
-      formData.append("aboutText", sportsData.aboutText);
-      formData.append("startDate", sportsData.startDate || "");
-      formData.append("endDate", sportsData.endDate || "");
-      formData.append("venue", sportsData.venue);
-      formData.append("registerLink", sportsData.registerLink);
-      formData.append("ctaTitle", sportsData.ctaTitle);
-      formData.append("ctaDescription", sportsData.ctaDescription);
-
-      formData.append(
-        "highlights",
-        JSON.stringify(sportsData.highlights || [])
-      );
-
-      formData.append(
-        "timeline",
-        JSON.stringify(sportsData.timeline || [])
-      );
-
-      if (heroImageFile) {
-        formData.append("heroImage", heroImageFile);
-      }
-
-      const res = await api.put("/annual-sports-meet", formData);
-
-      notify("success", "Success", res.data.message);
-
-      await fetchSportsData();
+      await persistBasicInformation(sportsData);
     } catch (error) {
       notify(
         "error",
@@ -271,6 +360,62 @@ export default function SportsControl() {
       setSaving(false);
     }
   };
+
+  /* ==========================================================
+     AUTOSAVE EFFECT — basic info + highlights + timeline
+  ========================================================== */
+
+  useEffect(() => {
+    // Skip the very first run (initial mount) and any run that was
+    // caused by a programmatic update (fetch/refresh/delete-all).
+    if (skipAutoSaveRef.current) {
+      skipAutoSaveRef.current = false;
+      return;
+    }
+
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      try {
+        setAutoSaveStatus("saving");
+
+        await persistBasicInformation(sportsData, {
+          silent: true,
+        });
+
+        setAutoSaveStatus("saved");
+      } catch (error) {
+        setAutoSaveStatus("error");
+
+        notify(
+          "error",
+          "Autosave Failed",
+          error.response?.data?.message ||
+            "Failed to save your changes automatically. Please try again."
+        );
+      }
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    sportsData.heroSubtitle,
+    sportsData.aboutText,
+    sportsData.startDate,
+    sportsData.endDate,
+    sportsData.venue,
+    sportsData.registerLink,
+    sportsData.ctaTitle,
+    sportsData.ctaDescription,
+    sportsData.highlights,
+    sportsData.timeline,
+  ]);
 
   /* ==========================================================
      SPORTS EVENTS
@@ -377,6 +522,8 @@ export default function SportsControl() {
 
   /* ==========================================================
      TIMELINE
+     (local state only — persisted automatically by the autosave
+     effect above, since `timeline` is one of its watched fields)
   ========================================================== */
 
   const addTimeline = () => {
@@ -405,6 +552,8 @@ export default function SportsControl() {
 
   /* ==========================================================
      HIGHLIGHTS
+     (local state only — persisted automatically by the autosave
+     effect above, since `highlights` is one of its watched fields)
   ========================================================== */
 
   const addHighlight = () => {
@@ -580,7 +729,6 @@ export default function SportsControl() {
     );
   };
 
-
   /* ==========================================================
      DELETE ALL
   ========================================================== */
@@ -591,11 +739,26 @@ export default function SportsControl() {
       "This will permanently remove all Annual Sports Meet data. Continue?",
       async () => {
         try {
+          // Cancel any pending autosave so it can't fire right after the
+          // record is deleted and silently recreate it.
+          if (autoSaveTimeoutRef.current) {
+            clearTimeout(autoSaveTimeoutRef.current);
+          }
+
           await api.delete("/annual-sports-meet");
 
+          // This reset is programmatic, not a user edit — skip the next
+          // autosave effect run it would otherwise trigger.
+          skipAutoSaveRef.current = true;
+
           setSportsData(initialSportsData);
-          setHeroImageFile(null);
+
+          if (heroPreview?.startsWith("blob:")) {
+            URL.revokeObjectURL(heroPreview);
+          }
           setHeroPreview("");
+
+          setAutoSaveStatus("idle");
 
           notify(
             "success",
@@ -643,6 +806,40 @@ export default function SportsControl() {
   }, [sportsData.achievements, achievementSearch]);
 
   /* ==========================================================
+     AUTOSAVE INDICATOR
+  ========================================================== */
+
+  const AutoSaveIndicator = () => {
+    if (autoSaveStatus === "saving") {
+      return (
+        <span className="inline-flex items-center gap-2 text-sm text-base-content/60">
+          <Loader2 size={14} className="animate-spin" />
+          Saving...
+        </span>
+      );
+    }
+
+    if (autoSaveStatus === "saved") {
+      return (
+        <span className="inline-flex items-center gap-2 text-sm text-success">
+          <Check size={14} />
+          All changes saved
+        </span>
+      );
+    }
+
+    if (autoSaveStatus === "error") {
+      return (
+        <span className="inline-flex items-center gap-2 text-sm text-error">
+          Autosave failed — click Save Now
+        </span>
+      );
+    }
+
+    return null;
+  };
+
+  /* ==========================================================
      RETURN
   ========================================================== */
 
@@ -679,11 +876,7 @@ export default function SportsControl() {
 
       <LoadingModal
         isOpen={loading || saving}
-        title={
-          saving
-            ? "Saving Annual Sports Meet"
-            : "Loading Annual Sports Meet"
-        }
+        title={saving ? "Saving Annual Sports Meet" : "Loading Annual Sports Meet"}
         message={
           saving
             ? "Please wait while your changes are being saved..."
@@ -741,7 +934,8 @@ export default function SportsControl() {
                   Manage the complete Annual Sports Meet, including
                   hero section, sports events, highlights, timeline,
                   achievements and registration from one
-                  enterprise dashboard.
+                  enterprise dashboard. Changes save automatically as
+                  you type.
                 </p>
               </div>
             </div>
@@ -768,8 +962,11 @@ export default function SportsControl() {
                       information.
                     </p>
                   </div>
-                  <div className="badge badge-primary badge-lg">
-                    Single Record CMS
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="badge badge-primary badge-lg">
+                      Single Record CMS
+                    </div>
+                    <AutoSaveIndicator />
                   </div>
                 </div>
 
@@ -899,16 +1096,34 @@ export default function SportsControl() {
                 {/* HERO IMAGE */}
                 <div className="divider">Hero Banner</div>
 
-                <div className="form-control">
-                  <label className="btn btn-outline">
-                    Choose Hero Image
+                <div className="form-control flex-row items-center gap-3">
+                  <label
+                    className={`btn btn-outline ${
+                      savingHeroImage ? "btn-disabled" : ""
+                    }`}
+                  >
+                    {savingHeroImage ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      "Choose Hero Image"
+                    )}
                     <input
                       type="file"
                       accept="image/*"
                       className="hidden"
+                      disabled={savingHeroImage}
                       onChange={handleHeroImageChange}
                     />
                   </label>
+
+                  {savingHeroImage && (
+                    <span className="text-sm text-base-content/60">
+                      Uploading and saving hero image...
+                    </span>
+                  )}
                 </div>
 
                 {heroPreview && (
@@ -925,16 +1140,23 @@ export default function SportsControl() {
                   </motion.div>
                 )}
 
-                <div>
-                   <button
-                      type="button"
-                      onClick={saveBasicInformation}
-                      disabled={saving}
-                      className="btn btn-primary w-full"
-                    >
-                      <Save size={18} />
-                      {saving ? "Saving..." : "Save Changes"}
-                    </button>
+                <div className="flex items-center justify-between gap-3 mt-4">
+                  <p className="text-xs text-base-content/60">
+                    Fields above save automatically a moment after you
+                    stop typing. Use "Save Now" only if you want to
+                    force an immediate save (e.g. right after choosing
+                    a hero image).
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={saveBasicInformation}
+                    disabled={saving}
+                    className="btn btn-primary btn-sm shrink-0"
+                  >
+                    <Save size={16} />
+                    {saving ? "Saving..." : "Save Now"}
+                  </button>
                 </div>
 
                 {/* ==========================================================
@@ -1393,8 +1615,6 @@ export default function SportsControl() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        
-
                         <input
                           type="text"
                           value={achievementSearch}
@@ -1951,7 +2171,6 @@ export default function SportsControl() {
                   </h2>
 
                   <div className="space-y-3">
-
                     <button
                       type="button"
                       onClick={fetchSportsData}
@@ -1973,43 +2192,46 @@ export default function SportsControl() {
           <div className="sticky bottom-4 z-30">
             <div className="card bg-base-100 border border-base-300 shadow-2xl">
               <div className="card-body py-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <AutoSaveIndicator />
 
-                <div className="flex flex-wrap justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={fetchSportsData}
-                    disabled={loading}
-                    className="btn btn-outline"
-                  >
-                    Refresh
-                  </button>
+                  <div className="flex flex-wrap justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={fetchSportsData}
+                      disabled={loading}
+                      className="btn btn-outline"
+                    >
+                      Refresh
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={saveBasicInformation}
-                    disabled={saving}
-                    className="btn btn-primary"
-                  >
-                    {saving ? (
-                      <>
-                        <span className="loading loading-spinner loading-sm" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save size={18} />
-                        Save All Changes
-                      </>
-                    )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={saveBasicInformation}
+                      disabled={saving}
+                      className="btn btn-primary"
+                    >
+                      {saving ? (
+                        <>
+                          <span className="loading loading-spinner loading-sm" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save size={18} />
+                          Save Now
+                        </>
+                      )}
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={handleDeleteAll}
-                    className="btn btn-error"
-                  >
-                    Delete All
-                  </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAll}
+                      className="btn btn-error"
+                    >
+                      Delete All
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

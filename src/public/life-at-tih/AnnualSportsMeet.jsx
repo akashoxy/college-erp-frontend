@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Quote,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 const getImageUrl = (image) => image || "";
 
@@ -901,6 +902,7 @@ export default function AnnualSportsMeet() {
           </div>
         </section>
       </div>
+      <LogoStrip/>
     </>
   );
 }

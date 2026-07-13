@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import tihlogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 /* ==========================================================
    ANIMATION VARIANTS
@@ -128,6 +129,7 @@ export default function CentralLibrary() {
 
 
   return (
+    <>
     <div className="min-h-screen bg-base-200">
       <link
         rel="stylesheet"
@@ -419,5 +421,7 @@ export default function CentralLibrary() {
         )}
       </div>
     </div>
+    <LogoStrip/>
+    </>
   );
 }

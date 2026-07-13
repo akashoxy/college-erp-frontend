@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import tihlogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function ComputerLaboratory() {
   const [labData, setLabData] =
@@ -101,6 +102,7 @@ setLabData(data.data);
     );
   }
   return (
+    <>
   <div className="min-h-screen bg-base-200 overflow-hidden">
 
     {/* ==========================================
@@ -1068,5 +1070,7 @@ setLabData(data.data);
     </section>
 
   </div>
+  <LogoStrip/>
+  </>
 );
 }

@@ -6,6 +6,7 @@ import {
   ExternalLink,
   FileText,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 export const AcademicCalendar = () => {
   const [calendar, setCalendar] = useState(null);
@@ -116,6 +117,8 @@ export const AcademicCalendar = () => {
 
         </div>
       </section>
+
+      <LogoStrip/>
 
     </>
   );

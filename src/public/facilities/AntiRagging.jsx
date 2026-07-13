@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 /* ==========================================================
    ANIMATION
@@ -135,6 +136,7 @@ export default function AntiRagging() {
   ======================================================== */
 
   return (
+    <>
     <div className="bg-base-100">
 
       {/* =====================================================
@@ -1048,7 +1050,8 @@ export default function AntiRagging() {
       </section>
 
     </div>
-
+    <LogoStrip/>
+    </>
   );
 
 }

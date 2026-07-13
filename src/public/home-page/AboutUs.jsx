@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 /**
  * Loads the display/body typefaces once, scoped so they don't leak
@@ -124,6 +125,7 @@ export default function AboutUs() {
   }
 
   return (
+    <>
     <div className="au-root">
       <AboutUsFonts />
 
@@ -364,5 +366,8 @@ export default function AboutUs() {
         </div>
       </section>
     </div>
+
+    <LogoStrip/>
+    </>
   );
 }

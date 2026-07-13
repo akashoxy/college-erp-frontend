@@ -5,6 +5,7 @@ import ragging from "../../assets/images/ragging.png";
 import wifi from "../../assets/images/wifi.png";
 
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function Jeca() {
 const [jecaData, setJecaData] = useState(null);
@@ -253,7 +254,7 @@ if (!jecaData) {
 
         </div>
       </div>
-
+    <LogoStrip/>
     </>
   );
 }

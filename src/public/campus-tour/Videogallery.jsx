@@ -3,6 +3,7 @@ import api from "../../services/api";
 
 
 import tihlogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function Videogallery() {
   const [videoData, setVideoData] = useState({
@@ -397,7 +398,7 @@ export default function Videogallery() {
           </div>
         </section>
       </div>
-
+                  <LogoStrip/>
     </>
   );
 }

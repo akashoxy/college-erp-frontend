@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function AdmissionProcedure() {
   const [programs, setPrograms] = useState([]);
@@ -256,6 +257,8 @@ export default function AdmissionProcedure() {
           </div>
         </div>
       </section>
+
+      <LogoStrip/>
     </>
   );
 }

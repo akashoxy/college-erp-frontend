@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 import StudentNoticeSection from "./section/StudentNoticeSection";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function CircularNotice() {
   const [loading, setLoading] = useState(true);
@@ -375,6 +376,7 @@ setFeaturedNotices(
           </section>
         )}
       </div>
+      <LogoStrip/>
     </>
   );
 }

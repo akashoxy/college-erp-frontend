@@ -7,6 +7,7 @@ import {
   FaMapMarkerAlt,
   FaClock,
 } from "react-icons/fa";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
@@ -330,6 +331,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+      <LogoStrip/>
     </>
   );
 }

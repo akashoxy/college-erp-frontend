@@ -5,6 +5,7 @@ import menuImg from "../../assets/calendar/canteen.png";
 import ragging from "../../assets/images/ragging.png";
 import radio from "../../assets/images/radio.png";
 import wifi from "../../assets/images/wifi.png";
+import LogoStrip from "../../styles/Logostrip";
 
 
 const menuCategories = [
@@ -357,6 +358,7 @@ const CollegeCanteen = () => {
         </div>
       </dialog>
 
+                <LogoStrip/>
     </>
   );
 };

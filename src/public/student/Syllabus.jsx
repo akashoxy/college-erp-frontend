@@ -8,6 +8,7 @@ import {
   FileText,
   GraduationCap,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 
 
@@ -390,7 +391,7 @@ setSyllabus(
         )}
       </section>
 
-  
+  <LogoStrip/>
     </>
   );
 }

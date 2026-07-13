@@ -1,5 +1,6 @@
 import RecruitersSection from "./components/RecruitersSection";
 import PlacedStudents from "./components/PlacedStudents";
+import LogoStrip from "../../../styles/Logostrip";
 
 const CampusPlacement = () => {
   return (
@@ -48,6 +49,7 @@ const CampusPlacement = () => {
         {/* PLACED STUDENTS */}
         <PlacedStudents />
       </div>
+      <LogoStrip/>
     </>
   );
 };

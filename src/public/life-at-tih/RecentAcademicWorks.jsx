@@ -19,6 +19,7 @@ import {
   FaStar,
   FaBookOpen,
 } from "react-icons/fa";
+import LogoStrip from "../../styles/Logostrip";
 
 
 const getImageUrl = (image) => image || "";
@@ -190,6 +191,7 @@ const featuredActivity =
   // =====================================================
 
   return (
+    <>
     <div className="min-h-screen bg-base-100">
 
       {/* ===================================== */}
@@ -1023,6 +1025,8 @@ const featuredActivity =
 )}
 
           </div>
+          <LogoStrip/>
+          </>
   );
 };
 

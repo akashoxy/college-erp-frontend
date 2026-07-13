@@ -6,6 +6,7 @@ import ragging from "../../assets/images/ragging.png";
 import wifi from "../../assets/images/wifi.png";
 
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 export default function Cet() {
   const [cetData, setCetData] =
@@ -250,7 +251,7 @@ if (!cetData) {
 </div>
         </div>
       </div>
-
+          <LogoStrip/>
     </>
   );
 }

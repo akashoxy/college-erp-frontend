@@ -4,6 +4,7 @@ import api from "../../services/api";
 
 import accreditation from "../../assets/images/accreditation-3.png";
 import tihlogo from "../../assets/images/tih-logo.png";
+import LogoStrip from "../../styles/Logostrip";
 
 const ListOfHolidays = () => {
   const [holidays, setHolidays] = useState([]);
@@ -203,7 +204,7 @@ const ListOfHolidays = () => {
         </div>
 
       </section>
-
+      <LogoStrip/>
     </>
   );
 };

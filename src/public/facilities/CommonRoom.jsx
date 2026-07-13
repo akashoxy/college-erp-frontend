@@ -11,6 +11,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import LogoStrip from "../../styles/Logostrip";
 
 /* =========================================================
    FONTS
@@ -151,6 +152,7 @@ const CommonRoom = () => {
   ];
 
   return (
+    <>
     <div className="bg-base-100 overflow-hidden">
       {/* =========================================================
           HERO — asymmetric split, quiet ambient motion
@@ -649,6 +651,8 @@ const CommonRoom = () => {
         </div>
       </section>
     </div>
+    <LogoStrip/>
+    </>
   );
 };
 

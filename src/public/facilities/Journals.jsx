@@ -9,6 +9,7 @@ import {
   GraduationCap,
   ArrowUpRight,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 
 const displayFont = { fontFamily: "'Fraunces', 'Georgia', serif" };
@@ -75,6 +76,7 @@ setJournalData(res.data.data);
   const publications = journalData?.researchPublications || [];
 
   return (
+    <>
     <div className="bg-base-100 overflow-hidden">
       {/* =========================================================
           HERO
@@ -392,5 +394,7 @@ setJournalData(res.data.data);
         </div>
       </section>
     </div>
+    <LogoStrip/>
+    </>
   );
 }

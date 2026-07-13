@@ -14,6 +14,7 @@ import {
   CircleDot,
   GitCommit,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 const getImageUrl = (image) => image || "";
 
@@ -622,6 +623,7 @@ export default function SparkQuestFest() {
           </div>
         </section>
       </div>
+      <LogoStrip/>
     </>
   );
 }

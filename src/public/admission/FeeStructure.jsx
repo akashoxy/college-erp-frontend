@@ -8,6 +8,7 @@ import {
   Download,
   BookOpen,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 /* ==========================================================
    NOTE ON DAISYUI SETUP
@@ -186,6 +187,7 @@ const FeeStructure = () => {
   }
 
   return (
+    <>
     <div
       className="min-h-screen bg-base-200"
       style={{
@@ -498,6 +500,8 @@ const FeeStructure = () => {
         </div>
       </section>
     </div>
+    <LogoStrip/>
+    </>
   );
 };
 

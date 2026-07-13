@@ -14,6 +14,7 @@ import tihlogo from "../../assets/images/tih-logo.png";
 import ragging from "../../assets/images/ragging.png";
 import radio from "../../assets/images/radio.png";
 import wifi from "../../assets/images/wifi.png";
+import LogoStrip from "../../styles/Logostrip";
 
 
 /* ================= ANIMATIONS ================= */
@@ -267,39 +268,6 @@ const VirtualTour = () => {
         </div>
       </section>
 
-
-      {/* ================= ACCREDITATIONS ================= */}
-     <section className="bg-base-100 py-20">
-  <div className="max-w-6xl mx-auto px-6">
-    <div className="text-center mb-12">
-      <h2 className="text-4xl font-bold">
-        Accreditations & Affiliations
-      </h2>
-    </div>
-
-    <div className="grid md:grid-cols-3 gap-8">
-      {[ragging, wifi, radio].map((src, index) => (
-        <motion.div
-          key={index}
-          whileHover={{
-            scale: 1.05,
-            rotate: 2,
-          }}
-          className="bg-base-100 rounded-3xl shadow-xl border border-base-300 p-10 flex justify-center"
-        >
-          <div className="w-40 h-40 rounded-full bg-base-200 border border-base-300 shadow-lg flex items-center justify-center overflow-hidden">
-            <img
-              src={src}
-              alt="Affiliation"
-              className="w-32 h-32 object-contain"
-            />
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  </div>
-</section>
-
       {/* ================= CTA ================= */}
       <section className="py-24 bg-primary text-primary-content">
         <div className="max-w-4xl mx-auto text-center px-6">
@@ -328,7 +296,7 @@ const VirtualTour = () => {
           </div>
         </div>
       </section>
-
+      <LogoStrip/>
     </>
   );
 };

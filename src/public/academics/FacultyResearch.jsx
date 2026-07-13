@@ -12,6 +12,7 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import LogoStrip from "../../styles/Logostrip";
 
 /* ==========================================================
    ACCENT MAP
@@ -633,6 +634,7 @@ export default function FacultyResearch() {
           </motion.div>
         </div>
       </section>
+      <LogoStrip/>
     </>
   );
 }
