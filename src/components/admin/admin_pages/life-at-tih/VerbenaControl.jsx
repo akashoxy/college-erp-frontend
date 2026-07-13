@@ -2024,27 +2024,6 @@ export default function VerbenaControl() {
 
                 <div className="card-body py-4">
 
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-                    <div>
-
-                      <h3 className="font-black text-xl">
-
-                        Verbena Festival CMS
-
-                      </h3>
-
-                      <p className="text-base-content/60">
-
-                        Enterprise dashboard for managing
-                        the complete Verbena cultural festival.
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
                   <div className="flex justify-end gap-3">
 
                     <button

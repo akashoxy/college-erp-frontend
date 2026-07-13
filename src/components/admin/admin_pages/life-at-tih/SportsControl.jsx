@@ -1973,20 +1973,6 @@ export default function SportsControl() {
           <div className="sticky bottom-4 z-30">
             <div className="card bg-base-100 border border-base-300 shadow-2xl">
               <div className="card-body py-4">
-                <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
-                  <div>
-                    <h3 className="font-black text-xl">
-                      Annual Sports Meet CMS
-                    </h3>
-                    <p className="text-base-content/60 mt-1">
-                      Enterprise dashboard for managing hero content,
-                      highlights, sports events, timeline,
-                      achievements and registration.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="divider my-4" />
 
                 <div className="flex flex-wrap justify-end gap-3">
                   <button

@@ -1789,30 +1789,6 @@ setForm({
 
               <div className="card-body py-4">
 
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
-                  <div>
-
-                    <h3 className="font-black text-lg">
-
-                      Spark Quest CMS
-
-                    </h3>
-
-                    <p className="text-base-content/60">
-
-                      Manage every section of the Spark Quest
-                      Festival from one centralized enterprise
-                      dashboard.
-
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <div className="divider my-4"></div>
-
                 <div className="flex flex-wrap justify-end gap-3">
 
                   <button

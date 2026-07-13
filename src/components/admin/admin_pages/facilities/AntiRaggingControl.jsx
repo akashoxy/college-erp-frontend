@@ -2737,33 +2737,7 @@ setFormData((prev) => {
 
             <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
 
-              <div>
-
-                <h3 className="font-bold text-xl">
-
-                  Anti Ragging CMS Dashboard
-
-                </h3>
-
-                <p className="text-base-content/70 mt-2">
-
-                  Posters : {posterCount}
-
-                  <br />
-
-                  Rules : {ruleCount}
-
-                  <br />
-
-                  Committee Members : {committeeCount}
-
-                  <br />
-
-                  Features : {featureCount}
-
-                </p>
-
-              </div>
+            
 
               <div className="flex flex-wrap gap-3">
 
