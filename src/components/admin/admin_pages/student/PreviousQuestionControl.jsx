@@ -695,7 +695,7 @@ export default function PreviousQuestionControl() {
                 <input
                   type="text"
                   name="title"
-                  placeholder="Paper Title"
+                  placeholder="Paper Title/Paper Code"
                   className="input input-bordered w-full"
                   value={formData.title}
                   onChange={handleChange}
