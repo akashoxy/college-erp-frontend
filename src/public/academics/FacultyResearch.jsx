@@ -8,43 +8,291 @@ import {
   Award,
   Search,
   BookOpen,
+  ChevronDown,
+  Mail,
+  Phone,
 } from "lucide-react";
 
+/* ==========================================================
+   ACCENT MAP
+   Static class strings (never interpolated) so Tailwind's
+   scanner can always find them.
+========================================================== */
 
+const ACCENT = {
+  primary: {
+    text: "text-primary",
+    border: "border-primary/30",
+    badge: "badge-primary",
+    btn: "btn-primary",
+    ring: "focus-visible:outline-primary",
+  },
+  secondary: {
+    text: "text-secondary",
+    border: "border-secondary/30",
+    badge: "badge-secondary",
+    btn: "btn-secondary",
+    ring: "focus-visible:outline-secondary",
+  },
+  accent: {
+    text: "text-accent",
+    border: "border-accent/30",
+    badge: "badge-accent",
+    btn: "btn-accent",
+    ring: "focus-visible:outline-accent",
+  },
+};
+
+/* ==========================================================
+   CATALOG TAG — every record gets an accession number,
+   the same convention the Library section already uses
+   for its own shelves.
+========================================================== */
+
+function CatalogTag({ prefix, index, accentClass }) {
+  return (
+    <span
+      className={`font-mono text-[11px] tracking-widest ${accentClass}`}
+    >
+      {prefix}&mdash;{String(index + 1).padStart(3, "0")}
+    </span>
+  );
+}
+
+/* ==========================================================
+   LEDGER ROW — label / dotted leader / value, the
+   card-catalog way of setting a fact.
+========================================================== */
+
+function LedgerRow({ label, value, icon: Icon }) {
+  if (!value) return null;
+
+  return (
+    <div className="flex items-baseline gap-2 text-sm py-0.5">
+      <span className="whitespace-nowrap text-base-content/50 inline-flex items-center gap-1.5">
+        {Icon && <Icon size={13} />}
+        {label}
+      </span>
+      <span className="flex-1 border-b border-dotted border-base-300 translate-y-[-3px]" />
+      <span className="font-medium text-right break-all">{value}</span>
+    </div>
+  );
+}
+
+/* ==========================================================
+   PERSON CARD — a single directory record. Only name,
+   designation, and department show by default; everything
+   else lives behind "Open record" so the card genuinely
+   opens and closes rather than just linking to a modal.
+========================================================== */
+
+function PersonCard({ person, index, prefix, accent }) {
+  const [open, setOpen] = useState(false);
+  const c = ACCENT[accent];
+
+  const hasResearch = person.researchInterests?.length > 0;
+  const hasPublications = person.publications?.length > 0;
+  const hasSocials =
+    person.scholarLink || person.orcidLink || person.linkedinLink;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: (index % 6) * 0.08 }}
+      className={`card bg-base-100 border ${c.border} overflow-hidden`}
+    >
+      <figure className="relative h-72 overflow-hidden">
+        <img
+          src={person.photo || "https://via.placeholder.com/600x600"}
+          alt={person.name}
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+
+        {person.featured && (
+          <div className="absolute top-4 right-4">
+            <div className={`badge ${c.badge} gap-1`}>
+              <Award size={12} />
+              Featured
+            </div>
+          </div>
+        )}
+      </figure>
+
+      <div className="card-body p-6">
+        <div className="flex items-center justify-between mb-1">
+          <CatalogTag prefix={prefix} index={index} accentClass={c.text} />
+        </div>
+
+        <h3 className="fr-display text-2xl font-semibold leading-tight">
+          {person.name}
+        </h3>
+
+        <p className={`font-semibold ${c.text}`}>{person.designation}</p>
+
+        {person.department && (
+          <p className="text-base-content/60 text-sm">{person.department}</p>
+        )}
+
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className={`btn btn-sm btn-outline ${c.btn} mt-5 w-full justify-between font-normal`}
+        >
+          {open ? "Close record" : "Open record"}
+          <ChevronDown
+            size={16}
+            className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {/* Expand/collapse via CSS grid-rows — no layout jump,
+           no JS height measurement. */}
+        <div
+          className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+          style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+          aria-hidden={!open}
+        >
+          <div className="overflow-hidden">
+            <div className="pt-5 mt-5 border-t border-base-300 space-y-4">
+              <div className="space-y-1">
+                <LedgerRow label="Qualification" value={person.qualification} />
+                <LedgerRow label="Experience" value={person.experience} />
+                <LedgerRow label="Email" value={person.email} icon={Mail} />
+                <LedgerRow label="Phone" value={person.phone} icon={Phone} />
+              </div>
+
+              {hasResearch && (
+                <div>
+                  <h4 className="text-xs uppercase tracking-[0.15em] text-base-content/50 mb-2">
+                    Research Interests
+                  </h4>
+
+                  <div className="flex flex-wrap gap-2">
+                    {person.researchInterests.map((item, idx) => (
+                      <span key={idx} className="badge badge-outline">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {hasPublications && (
+                <div>
+                  <h4 className="text-xs uppercase tracking-[0.15em] text-base-content/50 mb-2">
+                    Publications &middot; {person.publications.length}
+                  </h4>
+
+                  <ul className="space-y-1.5">
+                    {person.publications.map((pub, idx) => (
+                      <li key={idx} className="flex gap-2 text-sm">
+                        <BookOpen size={14} className={`mt-0.5 shrink-0 ${c.text}`} />
+                        <span className="text-base-content/80">{pub}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {hasSocials && (
+                <div>
+                  <h4 className="text-xs uppercase tracking-[0.15em] text-base-content/50 mb-2">
+                    Academic Profiles
+                  </h4>
+
+                  <div className="flex flex-wrap gap-2">
+                    {person.scholarLink && (
+                      <a
+                        href={person.scholarLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`btn btn-xs ${c.btn}`}
+                      >
+                        Google Scholar
+                      </a>
+                    )}
+
+                    {person.orcidLink && (
+                      <a
+                        href={person.orcidLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-xs btn-outline"
+                      >
+                        ORCID
+                      </a>
+                    )}
+
+                    {person.linkedinLink && (
+                      <a
+                        href={person.linkedinLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-xs btn-outline"
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ==========================================================
+   SECTION HEADING
+========================================================== */
+
+function SectionHeading({ eyebrow, accent, title, description }) {
+  const c = ACCENT[accent];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center mb-14"
+    >
+      <div className={`badge ${c.badge} badge-lg mb-4`}>{eyebrow}</div>
+
+      <h2 className="fr-display text-4xl md:text-5xl font-semibold">
+        {title}
+      </h2>
+
+      {description && (
+        <p className="mt-4 text-base-content/70 max-w-3xl mx-auto">
+          {description}
+        </p>
+      )}
+    </motion.div>
+  );
+}
+
+/* ==========================================================
+   MAIN PAGE
+========================================================== */
 
 export default function FacultyResearch() {
-  /* ===============================
-     STATES
-  =============================== */
-
-  const [facultyData, setFacultyData] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [searchTerm, setSearchTerm] =
-    useState("");
-
-  const [selectedFaculty, setSelectedFaculty] =
-    useState(null);
-
-  /* ===============================
-     FETCH DATA
-  =============================== */
+  const [facultyData, setFacultyData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchFacultyData = async () => {
     try {
       setLoading(true);
 
-    const res = await api.get("/faculty-research");
+      const res = await api.get("/faculty-research");
 
-setFacultyData(res.data?.data || []);
+      setFacultyData(res.data?.data || []);
     } catch (error) {
-      console.error(
-        "Faculty Fetch Error:",
-        error
-      );
+      console.error("Faculty Fetch Error:", error);
     } finally {
       setLoading(false);
     }
@@ -54,105 +302,83 @@ setFacultyData(res.data?.data || []);
     fetchFacultyData();
   }, []);
 
-  /* ===============================
-     SEPARATE DATA
-  =============================== */
+  const facultyMembers = facultyData.filter(
+    (item) => item.category === "faculty"
+  );
 
-  const facultyMembers =
-    facultyData.filter(
-      (item) =>
-        item.category === "faculty"
-    );
+  const labStaff = facultyData.filter((item) => item.category === "lab");
 
-  const labStaff =
-    facultyData.filter(
-      (item) =>
-        item.category === "lab"
-    );
-
-  const libraryStaff =
-    facultyData.filter(
-      (item) =>
-        item.category === "library"
-    );
-
-  /* ===============================
-     STATS
-  =============================== */
+  const libraryStaff = facultyData.filter(
+    (item) => item.category === "library"
+  );
 
   const stats = useMemo(() => {
-    const publicationCount =
-      facultyMembers.reduce(
-        (acc, faculty) =>
-          acc +
-          (faculty.publications?.length || 0),
-        0
-      );
+    const publicationCount = facultyMembers.reduce(
+      (acc, faculty) => acc + (faculty.publications?.length || 0),
+      0
+    );
 
     return {
       faculty: facultyMembers.length,
-
       lab: labStaff.length,
-
       library: libraryStaff.length,
-
       publications: publicationCount,
     };
-  }, [
-    facultyMembers,
-    labStaff,
-    libraryStaff,
-  ]);
+  }, [facultyMembers, labStaff, libraryStaff]);
+
+  const filteredFaculty = facultyMembers.filter((member) => {
+    const query = searchTerm.toLowerCase();
+
+    return (
+      member.name?.toLowerCase().includes(query) ||
+      member.designation?.toLowerCase().includes(query) ||
+      member.department?.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700;8..60,800&display=swap"
+      />
+
+      <style>{`
+        .fr-display {
+          font-family: "Source Serif 4", ui-serif, Georgia, serif;
+        }
+      `}</style>
 
       {/* ==================================
           HERO SECTION
       ================================== */}
 
       <section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-base-100 to-secondary/10">
-        <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-20 w-72 h-72 rounded-full bg-primary blur-3xl"></div>
-
           <div className="absolute bottom-20 right-20 w-72 h-72 rounded-full bg-secondary blur-3xl"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-24">
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-            }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
             className="text-center"
           >
             <div className="badge badge-primary badge-lg mb-6">
-              Academic Excellence
+              Academic Directory
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black text-base-content mb-6">
-              Faculty &
-              <span className="text-primary">
-                {" "}
-                Research
-              </span>
+            <h1 className="fr-display text-5xl md:text-7xl font-semibold text-base-content mb-6">
+              Faculty &amp;
+              <span className="text-primary"> Research</span>
             </h1>
 
             <p className="max-w-3xl mx-auto text-lg md:text-xl text-base-content/70 leading-relaxed">
-              Meet our distinguished
-              faculty members,
-              laboratory professionals,
-              and library experts who
-              drive innovation,
-              research excellence,
-              and academic success.
+              A working directory of the faculty, laboratory
+              professionals, and library staff who lead teaching,
+              research, and academic support across the institute.
             </p>
           </motion.div>
         </div>
@@ -165,146 +391,76 @@ setFacultyData(res.data?.data || []);
       <section className="py-16 bg-base-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="stat bg-base-100 rounded-3xl shadow-lg"
-            >
-              <div className="stat-figure text-primary">
-                <GraduationCap size={36} />
-              </div>
+            {[
+              {
+                icon: GraduationCap,
+                label: "Faculty Members",
+                value: stats.faculty,
+                accent: "primary",
+              },
+              {
+                icon: Users,
+                label: "Lab Staff",
+                value: stats.lab,
+                accent: "secondary",
+              },
+              {
+                icon: Library,
+                label: "Library Staff",
+                value: stats.library,
+                accent: "accent",
+              },
+              {
+                icon: BookOpen,
+                label: "Publications",
+                value: stats.publications,
+                accent: "primary",
+              },
+            ].map((s, i) => {
+              const c = ACCENT[s.accent];
+              const Icon = s.icon;
 
-              <div className="stat-title">
-                Faculty Members
-              </div>
+              return (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="stat bg-base-100 rounded-xl border border-base-300"
+                >
+                  <div className={`stat-figure ${c.text}`}>
+                    <Icon size={32} />
+                  </div>
 
-              <div className="stat-value text-primary">
-                {stats.faculty}
-              </div>
-            </motion.div>
+                  <div className="stat-title">{s.label}</div>
 
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              transition={{
-                delay: 0.1,
-              }}
-              className="stat bg-base-100 rounded-3xl shadow-lg"
-            >
-              <div className="stat-figure text-secondary">
-                <Award size={36} />
-              </div>
-
-              <div className="stat-title">
-                Lab Staff
-              </div>
-
-              <div className="stat-value text-secondary">
-                {stats.lab}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              transition={{
-                delay: 0.2,
-              }}
-              className="stat bg-base-100 rounded-3xl shadow-lg"
-            >
-              <div className="stat-figure text-accent">
-                <Library size={36} />
-              </div>
-
-              <div className="stat-title">
-                Library Staff
-              </div>
-
-              <div className="stat-value text-accent">
-                {stats.library}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              transition={{
-                delay: 0.3,
-              }}
-              className="stat bg-base-100 rounded-3xl shadow-lg"
-            >
-              <div className="stat-figure text-info">
-                <BookOpen size={36} />
-              </div>
-
-              <div className="stat-title">
-                Publications
-              </div>
-
-              <div className="stat-value text-info">
-                {stats.publications}
-              </div>
-            </motion.div>
+                  <div className={`stat-value fr-display ${c.text}`}>
+                    {s.value}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-            {/* ==================================
+      {/* ==================================
           SEARCH SECTION
       ================================== */}
 
       <section className="py-12 bg-base-100">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             className="max-w-2xl mx-auto"
           >
+            <label className="text-xs uppercase tracking-[0.2em] text-base-content/50 block mb-2 text-center">
+              Search the directory
+            </label>
+
             <div className="relative">
               <Search
                 size={20}
@@ -313,14 +469,10 @@ setFacultyData(res.data?.data || []);
 
               <input
                 type="text"
-                placeholder="Search faculty by name, designation or department..."
+                placeholder="Name, designation, or department…"
                 value={searchTerm}
-                onChange={(e) =>
-                  setSearchTerm(
-                    e.target.value
-                  )
-                }
-                className="input input-bordered input-lg w-full pl-14 rounded-2xl"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input input-bordered input-lg w-full pl-14 rounded-xl"
               />
             </div>
           </motion.div>
@@ -333,376 +485,71 @@ setFacultyData(res.data?.data || []);
 
       <section className="py-20 bg-base-200">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="text-center mb-14"
-          >
-            <div className="badge badge-primary badge-lg mb-4">
-              Academic Team
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold text-base-content">
-              Faculty Members
-            </h2>
-
-            <p className="mt-4 text-base-content/70 max-w-3xl mx-auto">
-              Dedicated educators,
-              researchers, and mentors
-              committed to delivering
-              quality education and
-              fostering innovation.
-            </p>
-          </motion.div>
+          <SectionHeading
+            eyebrow="Academic Team"
+            accent="primary"
+            title="Faculty Members"
+            description="Educators, researchers, and mentors leading coursework and academic research."
+          />
 
           {loading ? (
             <div className="flex justify-center py-20">
               <span className="loading loading-spinner loading-lg text-primary"></span>
             </div>
+          ) : filteredFaculty.length === 0 ? (
+            <div className="text-center py-12">
+              <GraduationCap size={60} className="mx-auto opacity-30" />
+              <p className="mt-4 text-base-content/60">
+                No matching faculty records.
+              </p>
+            </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {facultyMembers
-                .filter((member) => {
-                  const query =
-                    searchTerm.toLowerCase();
-
-                  return (
-                    member.name
-                      ?.toLowerCase()
-                      .includes(query) ||
-                    member.designation
-                      ?.toLowerCase()
-                      .includes(query) ||
-                    member.department
-                      ?.toLowerCase()
-                      .includes(query)
-                  );
-                })
-                .map(
-                  (
-                    member,
-                    index
-                  ) => (
-                    <motion.div
-                      key={
-                        member._id
-                      }
-                      initial={{
-                        opacity: 0,
-                        y: 40,
-                      }}
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      viewport={{
-                        once: true,
-                      }}
-                      transition={{
-                        delay:
-                          index *
-                          0.1,
-                      }}
-                      whileHover={{
-                        y: -10,
-                      }}
-                      className="card bg-base-100 shadow-xl border border-base-300 overflow-hidden"
-                    >
-                      {/* IMAGE */}
-                      <figure className="relative h-80 overflow-hidden">
-                        <img
-                         src={
-                            member.photo ||
-                            "https://via.placeholder.com/600x600"
-                          }
-                          alt={
-                            member.name
-                          }
-                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                        />
-
-                        {member.featured && (
-                          <div className="absolute top-4 right-4">
-                            <div className="badge badge-warning gap-1">
-                              <Award size={12} />
-                              Featured
-                            </div>
-                          </div>
-                        )}
-                      </figure>
-
-                      {/* CONTENT */}
-                      <div className="card-body">
-                        <h3 className="card-title text-2xl">
-                          {
-                            member.name
-                          }
-                        </h3>
-
-                        <p className="text-primary font-semibold">
-                          {
-                            member.designation
-                          }
-                        </p>
-
-                        {member.department && (
-                          <p className="text-base-content/70">
-                            {
-                              member.department
-                            }
-                          </p>
-                        )}
-
-                        <div className="divider my-1"></div>
-
-                        {member.qualification && (
-                          <p className="text-sm">
-                            <span className="font-semibold">
-                              Qualification:
-                            </span>{" "}
-                            {
-                              member.qualification
-                            }
-                          </p>
-                        )}
-
-                        {member.experience && (
-                          <p className="text-sm">
-                            <span className="font-semibold">
-                              Experience:
-                            </span>{" "}
-                            {
-                              member.experience
-                            }
-                          </p>
-                        )}
-
-                        {/* RESEARCH TAGS */}
-                        {member.researchInterests
-                          ?.length >
-                          0 && (
-                          <div className="mt-4">
-                            <h4 className="font-semibold mb-2">
-                              Research
-                              Interests
-                            </h4>
-
-                            <div className="flex flex-wrap gap-2">
-                              {member.researchInterests
-                                .slice(
-                                  0,
-                                  4
-                                )
-                                .map(
-                                  (
-                                    item,
-                                    idx
-                                  ) => (
-                                    <span
-                                      key={
-                                        idx
-                                      }
-                                      className="badge badge-outline"
-                                    >
-                                      {
-                                        item
-                                      }
-                                    </span>
-                                  )
-                                )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* PUBLICATIONS */}
-                        {member.publications
-                          ?.length >
-                          0 && (
-                          <div className="mt-4">
-                            <div className="badge badge-info gap-2">
-                              <BookOpen
-                                size={
-                                  12
-                                }
-                              />
-                              {
-                                member
-                                  .publications
-                                  .length
-                              }{" "}
-                              Publications
-                            </div>
-                          </div>
-                        )}
-
-                        {/* ACTION */}
-                        <div className="card-actions mt-6">
-                          <button
-                            onClick={() =>
-                              setSelectedFaculty(
-                                member
-                              )
-                            }
-                            className="btn btn-primary w-full"
-                          >
-                            View Profile
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                )}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+              {filteredFaculty.map((member, index) => (
+                <PersonCard
+                  key={member._id}
+                  person={member}
+                  index={index}
+                  prefix="FAC"
+                  accent="primary"
+                />
+              ))}
             </div>
           )}
         </div>
       </section>
 
-  
-            {/* ==================================
+      {/* ==================================
           LAB STAFF SECTION
       ================================== */}
 
       <section className="py-20 bg-base-100">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="text-center mb-14"
-          >
-            <div className="badge badge-secondary badge-lg mb-4">
-              Laboratory Team
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold">
-              Laboratory Staff
-            </h2>
-
-            <p className="mt-4 text-base-content/70 max-w-3xl mx-auto">
-              Experienced laboratory professionals
-              supporting practical learning,
-              experimentation, and technical
-              excellence.
-            </p>
-          </motion.div>
+          <SectionHeading
+            eyebrow="Laboratory Team"
+            accent="secondary"
+            title="Laboratory Staff"
+            description="Laboratory professionals supporting practical learning, experimentation, and technical work."
+          />
 
           {labStaff.length === 0 ? (
             <div className="text-center py-12">
-              <Award
-                size={60}
-                className="mx-auto opacity-30"
-              />
-
+              <Award size={60} className="mx-auto opacity-30" />
               <p className="mt-4 text-base-content/60">
                 No laboratory staff available.
               </p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {labStaff.map(
-                (staff, index) => (
-                  <motion.div
-                    key={staff._id}
-                    initial={{
-                      opacity: 0,
-                      y: 30,
-                    }}
-                    whileInView={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    viewport={{
-                      once: true,
-                    }}
-                    transition={{
-                      delay:
-                        index * 0.1,
-                    }}
-                    whileHover={{
-                      y: -8,
-                    }}
-                    className="card bg-base-200 shadow-xl border border-base-300 overflow-hidden"
-                  >
-                    <figure className="h-72 overflow-hidden">
-                      <img
-                       src={
-                        staff.photo ||
-                        "https://via.placeholder.com/500x500"
-                      }
-                        alt={staff.name}
-                        className="w-full h-full object-cover transition duration-500 hover:scale-110"
-                      />
-                    </figure>
-
-                    <div className="card-body">
-                      <h3 className="card-title text-xl">
-                        {staff.name}
-                      </h3>
-
-                      <p className="font-semibold text-secondary">
-                        {staff.designation}
-                      </p>
-
-                      {staff.qualification && (
-                        <p className="text-sm">
-                          <span className="font-semibold">
-                            Qualification:
-                          </span>{" "}
-                          {staff.qualification}
-                        </p>
-                      )}
-
-                      {staff.experience && (
-                        <p className="text-sm">
-                          <span className="font-semibold">
-                            Experience:
-                          </span>{" "}
-                          {staff.experience}
-                        </p>
-                      )}
-
-                      {staff.email && (
-                        <p className="text-sm break-all">
-                          <span className="font-semibold">
-                            Email:
-                          </span>{" "}
-                          {staff.email}
-                        </p>
-                      )}
-
-                      <div className="card-actions mt-4">
-                        <button
-                          onClick={() =>
-                            setSelectedFaculty(
-                              staff
-                            )
-                          }
-                          className="btn btn-secondary w-full"
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-              )}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+              {labStaff.map((staff, index) => (
+                <PersonCard
+                  key={staff._id}
+                  person={staff}
+                  index={index}
+                  prefix="LAB"
+                  accent="secondary"
+                />
+              ))}
             </div>
           )}
         </div>
@@ -714,381 +561,35 @@ setFacultyData(res.data?.data || []);
 
       <section className="py-20 bg-base-200">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="text-center mb-14"
-          >
-            <div className="badge badge-accent badge-lg mb-4">
-              Library Team
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold">
-              Library Professionals
-            </h2>
-
-            <p className="mt-4 text-base-content/70 max-w-3xl mx-auto">
-              Dedicated information specialists
-              providing access to knowledge,
-              research resources, and academic
-              support services.
-            </p>
-          </motion.div>
+          <SectionHeading
+            eyebrow="Library Team"
+            accent="accent"
+            title="Library Professionals"
+            description="Information specialists providing access to research resources and academic support."
+          />
 
           {libraryStaff.length === 0 ? (
             <div className="text-center py-12">
-              <Library
-                size={60}
-                className="mx-auto opacity-30"
-              />
-
+              <Library size={60} className="mx-auto opacity-30" />
               <p className="mt-4 text-base-content/60">
                 No library staff available.
               </p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {libraryStaff.map(
-                (staff, index) => (
-                  <motion.div
-                    key={staff._id}
-                    initial={{
-                      opacity: 0,
-                      y: 30,
-                    }}
-                    whileInView={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    viewport={{
-                      once: true,
-                    }}
-                    transition={{
-                      delay:
-                        index * 0.1,
-                    }}
-                    whileHover={{
-                      y: -8,
-                    }}
-                    className="card bg-base-100 shadow-xl border border-base-300 overflow-hidden"
-                  >
-                    <figure className="h-72 overflow-hidden">
-                      <img
-                        src={
-                          staff.photo ||
-                          "https://via.placeholder.com/500x500"
-                        }
-                        alt={staff.name}
-                        className="w-full h-full object-cover transition duration-500 hover:scale-110"
-                      />
-                    </figure>
-
-                    <div className="card-body">
-                      <h3 className="card-title text-xl">
-                        {staff.name}
-                      </h3>
-
-                      <p className="font-semibold text-accent">
-                        {staff.designation}
-                      </p>
-
-                      {staff.qualification && (
-                        <p className="text-sm">
-                          <span className="font-semibold">
-                            Qualification:
-                          </span>{" "}
-                          {staff.qualification}
-                        </p>
-                      )}
-
-                      {staff.experience && (
-                        <p className="text-sm">
-                          <span className="font-semibold">
-                            Experience:
-                          </span>{" "}
-                          {staff.experience}
-                        </p>
-                      )}
-
-                      {staff.email && (
-                        <p className="text-sm break-all">
-                          <span className="font-semibold">
-                            Email:
-                          </span>{" "}
-                          {staff.email}
-                        </p>
-                      )}
-
-                      <div className="card-actions mt-4">
-                        <button
-                          onClick={() =>
-                            setSelectedFaculty(
-                              staff
-                            )
-                          }
-                          className="btn btn-accent w-full"
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-              )}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+              {libraryStaff.map((staff, index) => (
+                <PersonCard
+                  key={staff._id}
+                  person={staff}
+                  index={index}
+                  prefix="LIB"
+                  accent="accent"
+                />
+              ))}
             </div>
           )}
         </div>
       </section>
-
-      
-            {/* ==================================
-          FACULTY PROFILE MODAL
-      ================================== */}
-
-      {selectedFaculty && (
-        <dialog
-          open
-          className="modal modal-open"
-        >
-          <div className="modal-box max-w-5xl bg-base-100">
-            <button
-              onClick={() =>
-                setSelectedFaculty(null)
-              }
-              className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
-            >
-              ✕
-            </button>
-
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* IMAGE */}
-              <div>
-                <img
-                 src={
-                    selectedFaculty.photo ||
-                    "https://via.placeholder.com/600x600"
-                  }
-                  alt={
-                    selectedFaculty.name
-                  }
-                  className="w-full h-125 object-cover rounded-3xl shadow-xl"
-                />
-              </div>
-
-              {/* DETAILS */}
-              <div>
-                <div className="mb-6">
-                  <h2 className="text-4xl font-bold">
-                    {
-                      selectedFaculty.name
-                    }
-                  </h2>
-
-                  <p className="text-primary text-xl font-semibold mt-2">
-                    {
-                      selectedFaculty.designation
-                    }
-                  </p>
-
-                  {selectedFaculty.department && (
-                    <p className="text-base-content/70 mt-2">
-                      {
-                        selectedFaculty.department
-                      }
-                    </p>
-                  )}
-                </div>
-
-                {/* BASIC INFO */}
-
-                <div className="space-y-3 mb-6">
-                  {selectedFaculty.qualification && (
-                    <div>
-                      <span className="font-bold">
-                        Qualification:
-                      </span>{" "}
-                      {
-                        selectedFaculty.qualification
-                      }
-                    </div>
-                  )}
-
-                  {selectedFaculty.experience && (
-                    <div>
-                      <span className="font-bold">
-                        Experience:
-                      </span>{" "}
-                      {
-                        selectedFaculty.experience
-                      }
-                    </div>
-                  )}
-
-                  {selectedFaculty.email && (
-                    <div>
-                      <span className="font-bold">
-                        Email:
-                      </span>{" "}
-                      {
-                        selectedFaculty.email
-                      }
-                    </div>
-                  )}
-
-                  {selectedFaculty.phone && (
-                    <div>
-                      <span className="font-bold">
-                        Phone:
-                      </span>{" "}
-                      {
-                        selectedFaculty.phone
-                      }
-                    </div>
-                  )}
-                </div>
-
-                {/* RESEARCH INTERESTS */}
-
-                {selectedFaculty
-                  .researchInterests
-                  ?.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="font-bold text-xl mb-3">
-                      Research Interests
-                    </h3>
-
-                    <div className="flex flex-wrap gap-2">
-                      {selectedFaculty.researchInterests.map(
-                        (
-                          interest,
-                          index
-                        ) => (
-                          <span
-                            key={index}
-                            className="badge badge-primary badge-lg"
-                          >
-                            {interest}
-                          </span>
-                        )
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* PUBLICATIONS */}
-
-                {selectedFaculty
-                  .publications?.length >
-                  0 && (
-                  <div className="mb-6">
-                    <h3 className="font-bold text-xl mb-3">
-                      Publications
-                    </h3>
-
-                    <ul className="space-y-2">
-                      {selectedFaculty.publications.map(
-                        (
-                          publication,
-                          index
-                        ) => (
-                          <li
-                            key={index}
-                            className="flex gap-2"
-                          >
-                            <BookOpen
-                              size={16}
-                              className="mt-1 text-primary"
-                            />
-
-                            <span>
-                              {
-                                publication
-                              }
-                            </span>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                )}
-
-                {/* SOCIAL LINKS */}
-
-                {(selectedFaculty.scholarLink ||
-                  selectedFaculty.orcidLink ||
-                  selectedFaculty.linkedinLink) && (
-                  <div>
-                    <h3 className="font-bold text-xl mb-3">
-                      Academic Profiles
-                    </h3>
-
-                    <div className="flex flex-wrap gap-3">
-                      {selectedFaculty.scholarLink && (
-                        <a
-                          href={
-                            selectedFaculty.scholarLink
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn btn-primary btn-sm"
-                        >
-                          Google Scholar
-                        </a>
-                      )}
-
-                      {selectedFaculty.orcidLink && (
-                        <a
-                          href={
-                            selectedFaculty.orcidLink
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn btn-secondary btn-sm"
-                        >
-                          ORCID
-                        </a>
-                      )}
-
-                      {selectedFaculty.linkedinLink && (
-                        <a
-                          href={
-                            selectedFaculty.linkedinLink
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn btn-accent btn-sm"
-                        >
-                          LinkedIn
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="modal-action">
-              <button
-                className="btn"
-                onClick={() =>
-                  setSelectedFaculty(null)
-                }
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
 
       {/* ==================================
           RESEARCH HIGHLIGHTS
@@ -1097,77 +598,41 @@ setFacultyData(res.data?.data || []);
       <section className="py-20 bg-primary text-primary-content">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="fr-display text-4xl md:text-5xl font-semibold mb-6">
               Research Excellence
             </h2>
 
             <p className="max-w-3xl mx-auto text-lg opacity-90">
-              Our faculty members actively
-              contribute to research,
-              innovation, publications,
-              conferences, and academic
-              collaborations that shape the
-              future of education and
-              technology.
+              Faculty across the institute contribute to research,
+              publications, conferences, and academic collaborations
+              that shape the future of education and technology.
             </p>
 
             <div className="grid md:grid-cols-4 gap-6 mt-12">
-              <div className="bg-white/10 rounded-3xl p-6">
-                <div className="text-4xl font-black">
-                  {stats.faculty}
+              {[
+                { label: "Faculty Members", value: stats.faculty },
+                { label: "Publications", value: stats.publications },
+                { label: "Lab Professionals", value: stats.lab },
+                { label: "Library Experts", value: stats.library },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-xl border border-white/20 p-6"
+                >
+                  <div className="fr-display text-4xl font-semibold">
+                    {s.value}
+                  </div>
+                  <div className="opacity-80 mt-2">{s.label}</div>
                 </div>
-
-                <div className="opacity-80 mt-2">
-                  Faculty Members
-                </div>
-              </div>
-
-              <div className="bg-white/10 rounded-3xl p-6">
-                <div className="text-4xl font-black">
-                  {stats.publications}
-                </div>
-
-                <div className="opacity-80 mt-2">
-                  Publications
-                </div>
-              </div>
-
-              <div className="bg-white/10 rounded-3xl p-6">
-                <div className="text-4xl font-black">
-                  {stats.lab}
-                </div>
-
-                <div className="opacity-80 mt-2">
-                  Lab Professionals
-                </div>
-              </div>
-
-              <div className="bg-white/10 rounded-3xl p-6">
-                <div className="text-4xl font-black">
-                  {stats.library}
-                </div>
-
-                <div className="opacity-80 mt-2">
-                  Library Experts
-                </div>
-              </div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
-
     </>
   );
 }
