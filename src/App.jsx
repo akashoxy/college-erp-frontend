@@ -145,6 +145,9 @@ import StudentAttendance from "./public/student/StudentAttendance";
 //admin auth profile
 import AdminProfile from "./public/profile/AdminProfile";
 
+//sitemap
+import Sitemap from "./components/layout/Sitemap";
+
 
 
 
@@ -249,6 +252,12 @@ export default function App() {
 
         {/* homepage */}
         <Route path="/" element={<Homepage />} />
+
+        //sitemap
+        <Route
+    path="/sitemap"
+    element={<Sitemap />}
+/>
 
         {/* home */}
         <Route
