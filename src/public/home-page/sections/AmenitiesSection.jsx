@@ -8,6 +8,7 @@ import raggingImg from "../../../assets/images/ragging.png";
 import wifiImg from "../../../assets/amenities/wifi2.png";
 import radioImg from "../../../assets/amenities/radio2.png";
 import smartImg from "../../../assets/images/smart.png";
+import { Link } from "react-router-dom";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -124,12 +125,12 @@ function AmenitiesSection() {
           }}
           className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden bg-base-200 ring-1 ring-primary/15 group-hover:ring-primary/50 group-hover:ring-2 transition-all duration-500"
         >
-          <a href={item.link}>
+          <Link href={item.link}>
           <img
             src={item.image}
             alt={item.title}
             className="block mx-auto w-full h-full object-contain object-center p-3 group-hover:scale-[1.15] group-hover:-rotate-6 transition-transform duration-500 ease-out"
-          /></a>
+          /></Link>
         </motion.div>
 
         {/* small accent dot that pops in on hover, top-right of the circle */}
