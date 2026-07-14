@@ -30,9 +30,9 @@ function AmenitiesSection() {
 
   const amenities = [
     { title: "Smart Class", image: smartImg },
-    { title: "Radio TIH", image: radioImg, link: "/radiotih" },
+    { title: "Radio TIH", image: radioImg, link: "/radio-main" },
     { title: "Campus Wi-Fi", image: wifiImg },
-    { title: "Ragging Free Campus", image: raggingImg, link: "/antiragging-control"  },
+    { title: "Ragging Free Campus", image: raggingImg, link: "/anti-ragging"  },
   ];
 
   return (

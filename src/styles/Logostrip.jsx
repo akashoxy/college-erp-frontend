@@ -33,9 +33,9 @@ import wifi from "../assets/amenities/wifi2.png"
 ========================================================== */
 
 const PLACEHOLDER_LOGOS = [
-  { src: radio, alt: "Logo 1", link: "/radiotih" },
+  { src: radio, alt: "Logo 1", link: "/radio-main" },
   { src: smart, alt: "Logo 2" },
-  { src: ragging, alt: "Logo 3", link: "/antiragging-control" },
+  { src: ragging, alt: "Logo 3", link: "/anti-ragging" },
   { src: wifi, alt: "Logo 4" },
 ];
 
