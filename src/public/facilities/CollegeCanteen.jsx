@@ -256,40 +256,6 @@ const CollegeCanteen = () => {
         </div>
       </section>
 
-      {/* FACILITIES */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <h2 className="text-center text-4xl font-bold mb-12">
-          Campus Facilities
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {facilities.map((facility, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ y: -10 }}
-              className="card bg-base-100 shadow-xl border border-base-300"
-            >
-              <figure className="p-8">
-  <div className="w-28 h-28 rounded-full bg-base-200 flex items-center justify-center shadow-md border border-base-300">
-    <img
-      src={facility.image}
-      alt={facility.title}
-      className="w-16 h-16 object-cover rounded-full"
-    />
-  </div>
-</figure>
-
-              <div className="card-body text-center">
-                <h3 className="card-title justify-center">
-                  {facility.title}
-                </h3>
-
-                <p>{facility.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="max-w-7xl mx-auto px-6 pb-20">

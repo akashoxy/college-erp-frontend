@@ -383,7 +383,7 @@ const AntiRaggingControl = () => {
       HERO IMAGE
   ====================================== */
 
-  const handleHeroImage =
+ const handleHeroImage =
     (file) => {
 
       if (!file)
@@ -424,13 +424,19 @@ const AntiRaggingControl = () => {
 
       );
 
-      setHeroPreview(
+      const preview = previewFile(file);
 
-        previewFile(file)
-
-      );
+      setHeroPreview(preview);
 
       setHeroImage(file);
+
+      setFormData((prev) => ({
+
+        ...prev,
+
+        heroBackgroundImage: preview,
+
+      }));
 
     };
 

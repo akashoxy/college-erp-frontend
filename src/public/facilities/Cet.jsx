@@ -209,46 +209,6 @@ if (!cetData) {
   CLICK HERE
 </a>
           </div>
-
-          {/* ICON SECTION */}
-
-          <div className="flex justify-center gap-16 mb-10">
-  <div
-    className="
-      w-24 h-24
-      rounded-full
-      overflow-hidden
-      border border-base-300
-      bg-base-100
-      shadow-md
-      flex items-center justify-center
-    "
-  >
-    <img
-      src={ragging}
-      alt="Anti Ragging"
-      className="w-32 h-32 object-cover rounded-full"
-    />
-  </div>
-
-  <div
-    className="
-      w-24 h-24
-      rounded-full
-      overflow-hidden
-      border border-base-300
-      bg-base-100
-      shadow-md
-      flex items-center justify-center
-    "
-  >
-    <img
-      src={wifi}
-      alt="WiFi"
-      className="w-full h-full object-contain p-2"
-    />
-  </div>
-</div>
         </div>
       </div>
           <LogoStrip/>

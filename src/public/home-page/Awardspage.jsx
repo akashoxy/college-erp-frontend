@@ -16,6 +16,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import api from "../../services/api";
+import LogoStrip from "../../styles/Logostrip";
 
 
 
@@ -731,7 +732,7 @@ setAwards(
         </AnimatePresence>
       </div>
 
-      
+      <LogoStrip/>
     </>
   );
 }

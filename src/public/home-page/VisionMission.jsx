@@ -15,6 +15,7 @@ import {
   TrophyIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import LogoStrip from "../../styles/Logostrip";
 
 /**
  * Loads the display/body typefaces once, scoped to this page so the
@@ -149,6 +150,7 @@ export default function VisionMission() {
   }
 
   return (
+    <>
     <div className="vm-root bg-base-100">
       <VmFonts />
 
@@ -388,5 +390,7 @@ export default function VisionMission() {
         </div>
       </section>
     </div>
+    <LogoStrip/>
+    </>
   );
 }

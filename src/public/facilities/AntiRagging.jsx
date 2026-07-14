@@ -44,20 +44,17 @@ export default function AntiRagging() {
   const [loading, setLoading] =
     useState(true);
 
-    const [paused, setPaused] = useState(false);
-    const [pausePoster, setPausePoster] = useState(false);
-
   const [
     antiRagging,
     setAntiRagging,
   ] = useState(null);
 
   const iconMap = {
-  Shield,
-  Scale,
-  Users,
-  FileWarning,
-};
+    Shield,
+    Scale,
+    Users,
+    FileWarning,
+  };
 
   /* ========================================================
      LOAD DATA
@@ -137,6 +134,33 @@ export default function AntiRagging() {
 
   return (
     <>
+    {/* Marquee keyframes — CSS-driven so hover-pause never snaps/restarts */}
+    <style>{`
+      @keyframes marquee-posters {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+      .marquee-poster-track {
+        animation: marquee-posters 35s linear infinite;
+        will-change: transform;
+      }
+      .marquee-poster-container:hover .marquee-poster-track {
+        animation-play-state: paused;
+      }
+
+      @keyframes marquee-rules {
+        from { transform: translateX(50px); }
+        to { transform: translateX(-50%); }
+      }
+      .marquee-rules-track {
+        animation: marquee-rules 35s linear infinite;
+        will-change: transform;
+      }
+      .marquee-rules-container:hover .marquee-rules-track {
+        animation-play-state: paused;
+      }
+    `}</style>
+
     <div className="bg-base-100">
 
       {/* =====================================================
@@ -185,75 +209,74 @@ export default function AntiRagging() {
           <div className="max-w-7xl mx-auto px-6 ">
 
             <motion.div
-  variants={fadeUp}
-  initial="hidden"
-  animate="visible"
-  className="w-full"
->
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              className="w-full"
+            >
 
-  <div className="flex justify-start mb-8">
+              <div className="flex justify-start mb-8">
 
-    <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20">
+                <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20">
 
-      <ShieldAlert
-        size={22}
-        className="text-error"
-      />
+                  <ShieldAlert
+                    size={22}
+                    className="text-error"
+                  />
 
-      <span className="font-semibold text-white">
-        Anti Ragging Cell
-      </span>
+                  <span className="font-semibold text-white">
+                    Anti Ragging Cell
+                  </span>
 
-    </div>
+                </div>
 
-  </div>
+              </div>
 
-          <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col items-center text-center">
 
-  <h1 className="text-4xl md:text-6xl xl:text-7xl font-black text-white leading-tight">
+                <h1 className="text-4xl md:text-6xl xl:text-7xl font-black text-white leading-tight">
 
-    Zero Tolerance
-    <br />
+                  Zero Tolerance
+                  <br />
 
-    <span className="text-error">
+                  <span className="text-error">
 
-      Against Ragging
+                    Against Ragging
 
-    </span>
+                  </span>
 
-  </h1>
+                </h1>
 
-  <p className="mt-8 text-lg md:text-xl leading-9 text-white/90 max-w-3xl">
+                <p className="mt-8 text-lg md:text-xl leading-9 text-white/90 max-w-3xl">
 
-    {antiRagging.heroSubtitle}
+                  {antiRagging.heroSubtitle}
 
-  </p>
+                </p>
 
-  <div className="flex flex-wrap justify-center gap-5 mt-12">
+                <div className="flex flex-wrap justify-center gap-5 mt-12">
 
-    <a
-      href="https://www.antiragging.in"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-error btn-lg rounded-full px-8"
-    >
-      {antiRagging.reportButtonText ||
-        "Report Incident"}
-    </a>
+                  <a
+                    href="https://www.antiragging.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-error btn-lg rounded-full px-8"
+                  >
+                    {antiRagging.reportButtonText ||
+                      "Report Incident"}
+                  </a>
 
-    <a
-      href="https://www.antiragging.in/complaint_register_form.html"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-outline btn-lg rounded-full border-white text-white hover:bg-white hover:text-black px-8"
-    >
-      {antiRagging.complaintButtonText ||
-        "Lodge Complaint"}
-    </a>
+                  <a
+                    href="https://www.antiragging.in/complaint_register_form.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline btn-lg rounded-full border-white text-white hover:bg-white hover:text-black px-8"
+                  >
+                    {antiRagging.complaintButtonText ||
+                      "Lodge Complaint"}
+                  </a>
 
-  </div>
-</div>
-
+                </div>
+              </div>
 
             </motion.div>
 
@@ -262,6 +285,115 @@ export default function AntiRagging() {
         </div>
 
       </section>
+
+      {/* =====================================================
+          POSTED NOTICE — FRAMED HERO IMAGE ENCORE
+      ====================================================== */}
+
+      {antiRagging.heroBackgroundImage && (
+
+        <section className="relative py-24 bg-base-200 overflow-hidden">
+
+          {/* subtle dot texture backdrop */}
+          <div
+            className="absolute inset-0 opacity-[0.04] pointer-events-none"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+              backgroundSize: "26px 26px",
+            }}
+          />
+
+          <div className="relative max-w-5xl mx-auto px-6">
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+
+              <div className="badge badge-error badge-lg mb-5">
+                Posted Notice
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-black">
+                A Campus That Watches Out for You
+              </h2>
+
+              <p className="mt-5 text-lg text-base-content/70 max-w-2xl mx-auto leading-8">
+                This notice stays up for a reason — ragging has no
+                place here, and every student deserves to feel safe
+                on their own campus.
+              </p>
+
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="relative mx-auto max-w-3xl"
+            >
+
+              {/* hanging pin */}
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-30 w-4 h-4 rounded-full bg-error shadow-lg ring-4 ring-base-100" />
+
+              {/* corner tape */}
+              <div className="absolute -top-3 -left-5 w-16 h-6 bg-warning/70 -rotate-[15deg] rounded-sm shadow-md" />
+              <div className="absolute -top-3 -right-5 w-16 h-6 bg-warning/70 rotate-[15deg] rounded-sm shadow-md" />
+
+              {/* frame */}
+              <div className="relative bg-base-100 border border-base-300 rounded-2xl shadow-2xl p-4 md:p-6 -rotate-1 hover:rotate-0 transition-transform duration-500">
+
+                <div className="relative overflow-hidden rounded-xl border-4 border-double border-base-300">
+
+                  <img
+                    src={antiRagging.heroBackgroundImage}
+                    alt="Anti Ragging Notice"
+                    loading="lazy"
+                    className="w-full max-h-[520px] object-cover"
+                  />
+
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-error/90 text-white text-sm font-semibold">
+
+                      <ShieldAlert size={16} />
+                      Zero Tolerance Notice
+
+                    </span>
+
+                  </div>
+
+                </div>
+
+                {/* plaque */}
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 px-2">
+
+                  <p className="text-sm text-base-content/60 italic">
+                    Displayed at every entrance & hostel block on campus
+                  </p>
+
+                  <div className="badge badge-outline">
+                    Awareness Drive
+                  </div>
+
+                </div>
+
+              </div>
+
+            </motion.div>
+
+          </div>
+
+        </section>
+
+      )}
 
       {/* =====================================================
           INTRODUCTION
@@ -363,16 +495,16 @@ export default function AntiRagging() {
                       <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
 
                         {(() => {
-  const Icon =
-    iconMap[feature.icon] || Shield;
+                          const Icon =
+                            iconMap[feature.icon] || Shield;
 
-  return (
-    <Icon
-      size={42}
-      className="text-primary"
-    />
-  );
-})()}
+                          return (
+                            <Icon
+                              size={42}
+                              className="text-primary"
+                            />
+                          );
+                        })()}
 
                       </div>
 
@@ -404,176 +536,161 @@ export default function AntiRagging() {
         </section>
 
       )}
-            {/* =====================================================
+
+      {/* =====================================================
           AWARENESS POSTERS
       ====================================================== */}
 
       {antiRagging.posters?.length > 0 && (
 
-  <section className="py-24 bg-base-100 overflow-hidden">
+        <section className="py-24 bg-base-100 overflow-hidden">
 
-    <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto">
 
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="text-center mb-16 px-6"
-      >
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16 px-6"
+            >
 
-        <div className="badge badge-secondary badge-lg mb-5">
+              <div className="badge badge-secondary badge-lg mb-5">
 
-          Awareness Campaign
+                Awareness Campaign
 
-        </div>
+              </div>
 
-        <h2 className="text-4xl md:text-5xl font-black">
+              <h2 className="text-4xl md:text-5xl font-black">
 
-          Anti Ragging Awareness Posters
+                Anti Ragging Awareness Posters
 
-        </h2>
+              </h2>
 
-        <p className="mt-5 text-lg text-base-content/70 max-w-3xl mx-auto">
+              <p className="mt-5 text-lg text-base-content/70 max-w-3xl mx-auto">
 
-          Creating awareness among students is the
-          first step towards maintaining a healthy,
-          respectful and ragging-free campus.
+                Creating awareness among students is the
+                first step towards maintaining a healthy,
+                respectful and ragging-free campus.
 
-        </p>
+              </p>
 
-      </motion.div>
+            </motion.div>
 
-      <div className="relative">
+            <div className="relative marquee-poster-container">
 
-        <motion.div
-          className="flex gap-10 w-max py-8"
-          animate={
-            pausePoster
-              ? {}
-              : {
-                  x: ["0%", "-50%"],
-                }
-          }
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
+              <div className="flex gap-10 w-max py-8 marquee-poster-track">
 
-          {[...antiRagging.posters, ...antiRagging.posters].map(
+                {[...antiRagging.posters, ...antiRagging.posters].map(
 
-            (poster, index) => (
+                  (poster, index) => (
 
-              <motion.div
-                key={index}
-                onMouseEnter={() => setPausePoster(true)}
-                onMouseLeave={() => setPausePoster(false)}
-                whileHover={{
-                  y: -20,
-                  scale: 1.04,
-                  rotateY: 10,
-                  rotateX: -5,
-                  zIndex: 999,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 220,
-                  damping: 18,
-                }}
-                className="
-                  group
-                  relative
-                  w-95
-                  shrink-0
-                  perspective-distant
-                "
-              >
+                    <motion.div
+                      key={index}
+                      whileHover={{
+                        y: -20,
+                        scale: 1.04,
+                        rotateY: 10,
+                        rotateX: -5,
+                        zIndex: 999,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 220,
+                        damping: 18,
+                      }}
+                      className="
+                        group
+                        relative
+                        w-95
+                        shrink-0
+                        perspective-distant
+                      "
+                    >
 
-                <div
-                  className="
-                    rounded-3xl
-                    bg-base-100
-                    border
-                    border-base-300
-                    shadow-xl
-                    overflow-visible
-                    transition-all
-                    duration-500
-                    group-hover:shadow-2xl
-                  "
-                >
+                      <div
+                        className="
+                          rounded-3xl
+                          bg-base-100
+                          border
+                          border-base-300
+                          shadow-xl
+                          overflow-visible
+                          transition-all
+                          duration-500
+                          group-hover:shadow-2xl
+                        "
+                      >
 
-                  {poster.image ? (
+                        {poster.image ? (
 
-                    <div className="relative h-72 bg-base-200 flex items-center justify-center overflow-visible">
+                          <div className="relative h-72 bg-base-200 flex items-center justify-center overflow-visible">
 
-  <img
-    src={poster.image}
-    alt={poster.title}
-    loading="lazy"
-    className="
-      max-w-full
-      max-h-full
-      object-contain
-      rounded-t-3xl
-      transition-all
-      duration-700
-      group-hover:scale-110
-      group-hover:-translate-y-6
-      group-hover:z-30
-    "
-  />
+                            <img
+                              src={poster.image}
+                              alt={poster.title}
+                              loading="lazy"
+                              className="
+                                max-w-full
+                                max-h-full
+                                object-contain
+                                rounded-t-3xl
+                                transition-all
+                                duration-700
+                                group-hover:scale-110
+                                group-hover:-translate-y-6
+                                group-hover:z-30
+                              "
+                            />
 
-</div>
+                          </div>
 
-                  ) : (
+                        ) : (
 
-                    <div className="h-72 rounded-t-3xl bg-base-200 flex items-center justify-center">
+                          <div className="h-72 rounded-t-3xl bg-base-200 flex items-center justify-center">
 
-                      <FileWarning
-                        size={60}
-                        className="text-base-content/40"
-                      />
+                            <FileWarning
+                              size={60}
+                              className="text-base-content/40"
+                            />
 
-                    </div>
+                          </div>
 
-                  )}
+                        )}
 
-                 <div className="card-body bg-base-100 relative z-10">
+                        <div className="card-body bg-base-100 relative z-10">
 
-                    <h3 className="text-2xl font-black">
+                          <h3 className="text-2xl font-black">
 
-                      {poster.title}
+                            {poster.title}
 
-                    </h3>
+                          </h3>
 
-                    <p className="leading-8 text-base-content/70">
+                          <p className="leading-8 text-base-content/70">
 
-                      {poster.description}
+                            {poster.description}
 
-                    </p>
+                          </p>
 
-                  </div>
+                        </div>
 
-                </div>
+                      </div>
 
-              </motion.div>
+                    </motion.div>
 
-            )
+                  )
 
-          )}
+                )}
 
-        </motion.div>
+              </div>
 
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-  </section>
+        </section>
 
-)}
+      )}
 
       {/* =====================================================
           RULES & REGULATIONS
@@ -583,7 +700,7 @@ export default function AntiRagging() {
 
         <section className="py-14 bg-base-200">
 
-          <div >
+          <div>
 
             <motion.div
               variants={fadeUp}
@@ -607,55 +724,48 @@ export default function AntiRagging() {
 
             </motion.div>
 
-            <div className="relative overflow-hidden">
-            <motion.div
-            className="flex gap-8 w-max pl-8 pr-8"
-              initial={{ x: 50 }}
-          animate={{
-            x: [50, "-50%"],
-          }}
-              transition={{
-                duration: 35,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            >
-              {[...antiRagging.rules, ...antiRagging.rules].map((rule, index) => (
-                <motion.div
-                  key={index}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  transition={{
-                    delay: (index % antiRagging.rules.length) * 0.06,
-                  }}
-                  className="card bg-base-100 border border-base-300 shadow-xl hover:-translate-y-2 transition-all duration-300 w-137.5 shrink-0"
-                >
-                  <div className="card-body">
-                    <div className="flex gap-5">
-                      <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0">
-                        <Scale
-                          size={30}
-                          className="text-warning"
-                        />
-                      </div>
+            <div className="relative overflow-hidden marquee-rules-container">
 
-                      <div>
-                        <h3 className="text-2xl font-bold">
-                          Rule {(index % antiRagging.rules.length) + 1}
-                        </h3>
+              <div className="flex gap-8 w-max pl-8 pr-8 marquee-rules-track">
 
-                        <p className="mt-4 leading-8 text-base-content/75">
-                          {rule}
-                        </p>
+                {[...antiRagging.rules, ...antiRagging.rules].map((rule, index) => (
+                  <motion.div
+                    key={index}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: (index % antiRagging.rules.length) * 0.06,
+                    }}
+                    className="card bg-base-100 border border-base-300 shadow-xl hover:-translate-y-2 transition-all duration-300 w-137.5 shrink-0"
+                  >
+                    <div className="card-body">
+                      <div className="flex gap-5">
+                        <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0">
+                          <Scale
+                            size={30}
+                            className="text-warning"
+                          />
+                        </div>
+
+                        <div>
+                          <h3 className="text-2xl font-bold">
+                            Rule {(index % antiRagging.rules.length) + 1}
+                          </h3>
+
+                          <p className="mt-4 leading-8 text-base-content/75">
+                            {rule}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+                  </motion.div>
+                ))}
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -765,29 +875,29 @@ export default function AntiRagging() {
 
                       {member.phone && (
 
-  <a
-    href={`tel:${member.phone}`}
-    className="
-      btn
-      btn-primary
-      btn-outline
-      mt-5
-      rounded-full
-      px-5
-      gap-2
-      hover:scale-105
-      transition-all
-      duration-300
-    "
-  >
+                        <a
+                          href={`tel:${member.phone}`}
+                          className="
+                            btn
+                            btn-primary
+                            btn-outline
+                            mt-5
+                            rounded-full
+                            px-5
+                            gap-2
+                            hover:scale-105
+                            transition-all
+                            duration-300
+                          "
+                        >
 
-    <Phone size={18} strokeWidth={2.2} />
+                          <Phone size={18} strokeWidth={2.2} />
 
-    <span>{member.phone}</span>
+                          <span>{member.phone}</span>
 
-  </a>
+                        </a>
 
-)}
+                      )}
 
                     </div>
 
@@ -804,8 +914,7 @@ export default function AntiRagging() {
 
       )}
 
-      
-            {/* =====================================================
+      {/* =====================================================
           CONTACT & HELPLINE
       ====================================================== */}
 
