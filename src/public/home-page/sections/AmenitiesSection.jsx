@@ -29,9 +29,9 @@ function AmenitiesSection() {
 
   const amenities = [
     { title: "Smart Class", image: smartImg },
-    { title: "Radio TIH", image: radioImg },
+    { title: "Radio TIH", image: radioImg, link: "/radiotih" },
     { title: "Campus Wi-Fi", image: wifiImg },
-    { title: "Ragging Free Campus", image: raggingImg },
+    { title: "Ragging Free Campus", image: raggingImg, link: "/antiragging-control"  },
   ];
 
   return (
@@ -124,11 +124,12 @@ function AmenitiesSection() {
           }}
           className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden bg-base-200 ring-1 ring-primary/15 group-hover:ring-primary/50 group-hover:ring-2 transition-all duration-500"
         >
+          <a href={item.link}>
           <img
             src={item.image}
             alt={item.title}
             className="block mx-auto w-full h-full object-contain object-center p-3 group-hover:scale-[1.15] group-hover:-rotate-6 transition-transform duration-500 ease-out"
-          />
+          /></a>
         </motion.div>
 
         {/* small accent dot that pops in on hover, top-right of the circle */}
