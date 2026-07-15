@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 import AnnouncementBar from "./sections/AnnouncementBar";
 import HeroSlider from "./sections/HeroSlider";
@@ -22,6 +23,9 @@ export default function Homepage() {
   });
 
   const [current, setCurrent] = useState(0);
+
+  const { scrollYProgress } = useScroll();
+  const barScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   const loadHomepage = useCallback(async () => {
     try {
@@ -62,6 +66,12 @@ export default function Homepage() {
 
   return (
     <div className="min-h-screen bg-base-100 overflow-x-hidden">
+      {/* Scroll progress bar - fixed to top of viewport */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[3px] origin-left z-50 bg-gradient-to-r from-primary to-secondary"
+        style={{ scaleX: barScale }}
+      />
+
       <AnnouncementBar
         address={homeData.address}
         admissionText={homeData.admissionText}
