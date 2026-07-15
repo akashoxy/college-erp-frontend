@@ -43,7 +43,7 @@ function Motes() {
     []
   );
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]" aria-hidden="true">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-5" aria-hidden="true">
       {dots.map((d) => (
         <motion.span
           key={d.id}
@@ -341,7 +341,7 @@ function HeroSlider({ slides = [], current, setCurrent }) {
       <button
         aria-label="Previous slide"
         onClick={() => setCurrent((prev) => (prev - 1 + total) % total)}
-        className="group absolute left-5 md:left-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center text-[#F3EFE6]/80 hover:text-[#0A0F1D] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="group absolute left-5 md:left-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center text-[#F3EFE6]/80 hover:text-[#0A0F1D] transition-colors duration-300 focus-visible:outline focus-visible:outline-offset-2"
         style={{ outlineColor: GOLD }}
       >
         <span className="absolute inset-0 rounded-full border border-[#F3EFE6]/25 group-hover:border-transparent transition-colors duration-300" />
@@ -355,7 +355,7 @@ function HeroSlider({ slides = [], current, setCurrent }) {
       <button
         aria-label="Next slide"
         onClick={() => setCurrent((prev) => (prev + 1) % total)}
-        className="group absolute right-5 md:right-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center text-[#F3EFE6]/80 hover:text-[#0A0F1D] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="group absolute right-5 md:right-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center text-[#F3EFE6]/80 hover:text-[#0A0F1D] transition-colors duration-300 focus-visible:outline focus-visible:outline-offset-2"
         style={{ outlineColor: GOLD }}
       >
         <span className="absolute inset-0 rounded-full border border-[#F3EFE6]/25 group-hover:border-transparent transition-colors duration-300" />
@@ -373,7 +373,7 @@ function HeroSlider({ slides = [], current, setCurrent }) {
             key={index}
             aria-label={`Go to slide ${index + 1}`}
             onClick={() => setCurrent(index)}
-            className="relative h-1.5 rounded-full overflow-hidden transition-all duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="relative h-1.5 rounded-full overflow-hidden transition-all duration-500 focus-visible:outline focus-visible:outline-offset-2"
             style={{
               width: current === index ? 38 : 7,
               background: current === index ? "rgba(243,239,230,0.25)" : "rgba(243,239,230,0.35)",

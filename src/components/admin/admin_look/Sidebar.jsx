@@ -58,7 +58,7 @@ function Sidebar({ collapsed, setCollapsed }) {
           className="w-9 h-9 rounded-xl bg-primary text-primary-content flex items-center justify-center font-serif font-black text-[12px] tracking-wide shrink-0"
           aria-hidden="true"
         >
-          TIH
+          TCH
         </div>
 
         {!collapsed && (
