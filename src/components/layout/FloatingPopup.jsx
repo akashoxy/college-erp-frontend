@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -18,34 +19,32 @@ import {
   MdCampaign,
 } from "react-icons/md";
 
+const REAPPEAR_DELAY = 20000; // ms
+
 export default function FloatingPopup({
   title = "Admissions Open",
   description = "Applications are now open for MCA, BCA and BBA programs.",
   buttonText = "Apply Now",
   buttonLink = "/admission",
-  storageKey = "floating_popup_closed",
 }) {
   const [open, setOpen] =
     useState(false);
+
+  const reappearTimer = useRef(null);
 
   /* =====================================
       INITIAL LOAD
   ===================================== */
 
   useEffect(() => {
-    try {
-      const closed =
-        localStorage.getItem(
-          storageKey
-        );
+    setOpen(true);
 
-      if (!closed) {
-        setOpen(true);
+    return () => {
+      if (reappearTimer.current) {
+        clearTimeout(reappearTimer.current);
       }
-    } catch {
-      setOpen(true);
-    }
-  }, [storageKey]);
+    };
+  }, []);
 
   /* =====================================
       ESC KEY
@@ -75,18 +74,20 @@ export default function FloatingPopup({
   }, [open]);
 
   /* =====================================
-      CLOSE
+      CLOSE — reopens automatically after REAPPEAR_DELAY,
+      even though the user dismissed it
   ===================================== */
 
   const handleClose = () => {
     setOpen(false);
 
-    try {
-      localStorage.setItem(
-        storageKey,
-        "true"
-      );
-    } catch {}
+    if (reappearTimer.current) {
+      clearTimeout(reappearTimer.current);
+    }
+
+    reappearTimer.current = setTimeout(() => {
+      setOpen(true);
+    }, REAPPEAR_DELAY);
   };
 
   return (
