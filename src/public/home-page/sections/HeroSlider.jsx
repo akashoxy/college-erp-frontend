@@ -78,6 +78,7 @@ function HeroSlider({ slides = [], current, setCurrent }) {
                 <span className="text-amber-400 text-xs font-semibold tracking-[0.35em] uppercase">
                   Techno India Hooghly
                 </span>
+                <span className="h-px w-10 bg-amber-400/80" />
               </motion.div>
 
               {slide.title && (
