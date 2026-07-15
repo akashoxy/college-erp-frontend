@@ -377,7 +377,7 @@ export default function Sitemap() {
             className="badge badge-outline gap-2 py-3 font-mono text-xs tracking-wide text-base-content/60"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_8px_2px] shadow-secondary/70" />
-            TECHNO INDIA HOOGHLY — FULL DIRECTORY
+            TECHNO COLLEGE HOOGHLY — FULL DIRECTORY
           </motion.span>
 
           <h1 className="tih-display font-bold text-base-content leading-[1.02] tracking-tight text-5xl md:text-7xl mt-6 mb-4">
@@ -452,7 +452,7 @@ export default function Sitemap() {
 
       <div className="max-w-7xl mx-auto h-px bg-gradient-to-r from-transparent via-base-300 to-transparent" />
       <div className="text-center py-12 text-base-content/50 text-xs font-mono">
-        TECHNO INDIA HOOGHLY · SITEMAP LAST SYNCED JUST NOW
+        TECHNO COLLEGE HOOGHLY · SITEMAP LAST SYNCED JUST NOW
       </div>
     </div>
   );
