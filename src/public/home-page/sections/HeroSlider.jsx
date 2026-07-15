@@ -118,8 +118,10 @@ function HeroSlider({ slides = [], current, setCurrent }) {
     };
   }, []);
 
+  // Arms the resume timer only if one isn't already running — so repeated
+  // enter/move events extend hover tracking without resetting the countdown.
   const armResumeTimer = () => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    if (resumeTimerRef.current) return;
     resumeTimerRef.current = setTimeout(() => {
       setPaused(false);
       resumeTimerRef.current = null;
@@ -127,6 +129,11 @@ function HeroSlider({ slides = [], current, setCurrent }) {
   };
 
   const handleMouseMove = (e) => {
+    // Keep the resume timer alive even if a stray mouseleave/mouseenter
+    // blip happens while the cursor is still effectively hovering.
+    setPaused(true);
+    armResumeTimer();
+
     if (prefersReducedMotion || !sectionRef.current) return;
     const rect = sectionRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
