@@ -49,7 +49,7 @@ function Sidebar({ collapsed, setCollapsed }) {
         h-screen shrink-0 flex-col
         bg-base-100 border-r border-base-300
         transition-[width] duration-300 ease-out
-        ${collapsed ? "lg:w-20" : "lg:w-72"}
+        ${collapsed ? "lg:w-14" : "lg:w-52"}
       `}
     >
       {/* BRAND */}
