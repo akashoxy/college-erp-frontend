@@ -18,24 +18,28 @@ const quickAccess = [
     label: "Notice board",
     hint: "Post & manage circulars",
     icon: Bell,
+    href: "/notice-control",
   },
   {
     code: "D-02",
     label: "Database",
     hint: "Student & staff records",
     icon: Database,
+    href: "/student-data",
   },
   {
     code: "E-03",
     label: "Enquiries",
     hint: "Admissions inbox",
     icon: Mail,
+    href: "/admission-enquiry",
   },
   {
     code: "P-04",
-    label: "Programs",
+    label: "Payments",
     hint: "Courses & intake",
     icon: GraduationCap,
+    href: "/admin-payment",
   },
 ];
 
@@ -85,11 +89,12 @@ export default function Dashboard() {
         </h2>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickAccess.map(({ code, label, hint, icon: Icon }) => (
-            <button
+          {quickAccess.map(({ code, label, hint, icon: Icon, href }) => (
+            <a
               key={code}
+              href={href}
               className="
-                group relative text-left
+                group relative block text-left
                 bg-white border border-[#E1E3DE] rounded-sm
                 px-5 pt-5 pb-6
                 transition-all duration-200
@@ -120,7 +125,7 @@ export default function Dashboard() {
                 {label}
               </div>
               <div className="text-xs text-[#182333]/50 mt-1">{hint}</div>
-            </button>
+            </a>
           ))}
         </div>
       </div>
