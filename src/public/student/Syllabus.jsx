@@ -12,16 +12,7 @@ import {
 } from "lucide-react";
 import LogoStrip from "../../styles/Logostrip";
 
-/* ===========================================
-   Shares the type system with the Dashboard:
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 
-   Colors below all come from DaisyUI semantic tokens
-   (base-100/200/300, base-content, primary, success, warning)
-   so the page follows whatever DaisyUI theme is active —
-   no hardcoded hex.
-=========================================== */
 
 const fraunces = { fontFamily: "Fraunces, serif" };
 const mono = { fontFamily: "'IBM Plex Mono', monospace" };
@@ -97,7 +88,7 @@ export default function Syllabus() {
             className="block text-[11px] tracking-[0.3em] uppercase mt-6 text-primary"
             style={mono}
           >
-            Academic Records &mdash; Registrar's Office
+            Academic Records
           </motion.span>
 
           <motion.h1
@@ -116,8 +107,7 @@ export default function Syllabus() {
             transition={{ duration: 0.6, delay: 0.75 }}
             className="mt-4 max-w-lg mx-auto text-base-content/70"
           >
-            The full semester-wise catalog of current and superseded
-            syllabi for MCA, BCA and BBA — indexed and ready to view.
+            The full semester-wise catalog syllabus for MCA, BCA and BBA.
           </motion.p>
 
           <motion.div
