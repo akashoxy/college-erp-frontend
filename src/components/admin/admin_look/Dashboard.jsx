@@ -25,7 +25,7 @@ const quickAccess = [
     label: "Database",
     hint: "Student & staff records",
     icon: Database,
-    href: "/admin/student-data",
+    href: "/admin/students-data",
   },
   {
     code: "E-03",
