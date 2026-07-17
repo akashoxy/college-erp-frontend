@@ -18,28 +18,28 @@ const quickAccess = [
     label: "Notice board",
     hint: "Post & manage circulars",
     icon: Bell,
-    href: "/notice-control",
+    href: "/admin/notice-control",
   },
   {
     code: "D-02",
     label: "Database",
     hint: "Student & staff records",
     icon: Database,
-    href: "/student-data",
+    href: "/admin/student-data",
   },
   {
     code: "E-03",
     label: "Enquiries",
     hint: "Admissions inbox",
     icon: Mail,
-    href: "/admission-enquiry",
+    href: "/admin/admission-enquiry",
   },
   {
     code: "P-04",
     label: "Payments",
     hint: "Courses & intake",
     icon: GraduationCap,
-    href: "/admin-payment",
+    href: "/admin/admin-payment",
   },
 ];
 
