@@ -104,7 +104,7 @@ const FOOTER_SECTIONS = [
 
 const LEGAL_LINKS = [
   { to: "/privacy", label: "Privacy Policy" },
-  { to: "/terms", label: "Terms & Conditions" },
+  { to: "/terms-condition", label: "Terms & Conditions" },
   { to: "/sitemap", label: "Sitemap" },
 ];
 

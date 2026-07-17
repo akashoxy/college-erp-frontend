@@ -147,6 +147,8 @@ import AdminProfile from "./public/profile/AdminProfile";
 
 //sitemap
 import Sitemap from "./components/layout/Sitemap";
+import TermsAndConditions from "./components/common/Termsandcinditions";
+
 
 
 
@@ -257,6 +259,11 @@ export default function App() {
         <Route
     path="/sitemap"
     element={<Sitemap />}
+/>
+
+    <Route
+    path="/terms-condition"
+    element={<TermsAndConditions />}
 />
 
         {/* home */}
