@@ -62,7 +62,7 @@ function AnnouncementBar({ address, admissionText }) {
 
               <div className="hidden md:flex items-center gap-2 text-base-content/70">
                 <FaPhoneAlt className="text-[11px] text-rose-600" />
-                <span>Admission Helpdesk</span>
+                <span> <Link to="/admission-form">Admission Helpdesk</Link> </span>
               </div>
             </div>
 
