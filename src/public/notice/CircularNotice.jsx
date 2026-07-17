@@ -227,7 +227,7 @@ setFeaturedNotices(
                     type="button"
                     onClick={goPrev}
                     aria-label="Previous featured notice"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm btn-ghost bg-base-100/80 hover:bg-base-100"
+                    className="absolute left-1 top-1/2 -translate-y-1/2 btn btn-circle btn-sm btn-ghost bg-base-100/80 hover:bg-base-100"
                   >
                     <FaChevronLeft />
                   </button>
@@ -236,7 +236,7 @@ setFeaturedNotices(
                     type="button"
                     onClick={goNext}
                     aria-label="Next featured notice"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm btn-ghost bg-base-100/80 hover:bg-base-100"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 btn btn-circle btn-sm btn-ghost bg-base-100/80 hover:bg-base-100"
                   >
                     <FaChevronRight />
                   </button>
