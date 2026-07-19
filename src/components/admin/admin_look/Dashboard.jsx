@@ -41,6 +41,13 @@ const quickAccess = [
     icon: GraduationCap,
     href: "/admin/admin-payment",
   },
+  {
+    code: "P-05",
+    label: "Payments Alerts",
+    hint: "payment alerts",
+    icon: GraduationCap,
+    href: "/admin/payment-alert",
+  },
 ];
 
 const today = new Date().toLocaleDateString("en-US", {

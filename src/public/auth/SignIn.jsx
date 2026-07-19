@@ -9,6 +9,7 @@ import { FaUserGraduate, FaChalkboardTeacher, FaUserCheck, FaUser, FaEnvelope, F
 import {
   Fonts,
   AmbientBackground,
+  MobileBrandBar,
   BrandPanel,
   CardShell,
   RoleTabs,
@@ -17,6 +18,8 @@ import {
   SelectField,
   ElegantButton,
   AuthFooter,
+  Toast,
+  SuccessSeal,
 } from "./Authchrome";
 
 const ROLES = [
@@ -33,6 +36,8 @@ export default function SignIn() {
   const [role, setRole] = useState(params.get("role") || "student");
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -53,7 +58,7 @@ export default function SignIn() {
   function fail(message) {
     setShake(true);
     setTimeout(() => setShake(false), 500);
-    alert(message);
+    setToast({ type: "error", message });
   }
 
   async function handleSubmit(e) {
@@ -106,9 +111,8 @@ export default function SignIn() {
 
       const res = await api.post(API_MAP[role], payload);
 
-      alert(res.data.message || "Registration Successful");
-
-      navigate("/login");
+      setSuccess(true);
+      setTimeout(() => navigate("/login"), 1100);
     } catch (error) {
       fail(error.response?.data?.message || "Registration Failed");
     } finally {
@@ -120,147 +124,167 @@ export default function SignIn() {
     <main className="min-h-screen relative overflow-hidden flex items-center bg-base-200">
       <Fonts />
       <AmbientBackground />
+      <Toast toast={toast} onClose={() => setToast(null)} />
 
-      <div className="relative w-full max-w-7xl mx-auto px-6 py-16">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <BrandPanel title="Techno College" subtitle="HOOGHLY" features={FEATURES} />
 
-          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            whileHover={{ y: -3 }}
+            transition={{ duration: 0.8 }}
+          >
+            <MobileBrandBar />
+
             <CardShell shake={shake}>
-              <div className="px-10 pt-8">
+              <div className="px-6 sm:px-10 pt-6 sm:pt-8">
                 <RoleTabs roles={ROLES} active={role} onChange={setRole} layoutId="signinRoleUnderline" />
               </div>
 
-              <div className="px-10 py-10">
+              <div className="px-6 sm:px-10 py-8 sm:py-10">
                 <AnimatePresence mode="wait">
-                  <motion.div
-                    key={role}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <div className="mb-10">
-                      <h2 className="font-display text-3xl text-base-content">Create your account</h2>
-                      <p className="font-body text-sm mt-2 text-base-content/50">
-                        Registering as{" "}
-                        <AnimatePresence mode="wait">
-                          <motion.span
-                            key={activeRole.key}
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -6 }}
-                            transition={{ duration: 0.25 }}
-                            className="inline-block text-primary"
-                          >
-                            {activeRole.label}
-                          </motion.span>
-                        </AnimatePresence>
-                      </p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-x-8 gap-y-7">
-                      <TextField icon={FaUser} placeholder="Full name" name="name" value={form.name} onChange={handleChange} />
-
-                      <TextField
-                        icon={FaEnvelope}
-                        type="email"
-                        placeholder="Email address"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                      />
-
-                      <AnimatePresence>
-                        {role === "student" && (
-                          <>
-                            <motion.div
-                              initial={{ opacity: 0, y: 12 }}
+                  {success ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      <SuccessSeal label="Account created" sublabel="Redirecting you to sign in…" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={role}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -16 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      <div className="mb-8 sm:mb-10">
+                        <h2 className="font-display text-2xl sm:text-3xl text-base-content">Create your account</h2>
+                        <p className="font-body text-sm mt-2 text-base-content/50">
+                          Registering as{" "}
+                          <AnimatePresence mode="wait">
+                            <motion.span
+                              key={activeRole.key}
+                              initial={{ opacity: 0, y: 6 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, height: 0 }}
+                              exit={{ opacity: 0, y: -6 }}
+                              transition={{ duration: 0.25 }}
+                              className="inline-block text-primary"
                             >
-                              <TextField
-                                placeholder="Registration number"
-                                name="registrationNo"
-                                value={form.registrationNo}
-                                onChange={handleChange}
-                              />
-                            </motion.div>
+                              {activeRole.label}
+                            </motion.span>
+                          </AnimatePresence>
+                        </p>
+                      </div>
 
-                            <motion.div
-                              initial={{ opacity: 0, y: 12 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, height: 0 }}
-                            >
-                              <TextField placeholder="Roll number" name="rollNo" value={form.rollNo} onChange={handleChange} />
-                            </motion.div>
+                      <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-x-8 gap-y-6 sm:gap-y-7">
+                        <TextField icon={FaUser} placeholder="Full name" name="name" value={form.name} onChange={handleChange} />
 
-                            <motion.div
-                              initial={{ opacity: 0, y: 12 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, height: 0 }}
-                            >
-                              <SelectField
-                                name="stream"
-                                value={form.stream}
-                                onChange={handleChange}
-                                placeholder="Select stream"
-                                options={[
-                                  { value: "BCA", label: "BCA" },
-                                  { value: "BBA", label: "BBA" },
-                                  { value: "MCA", label: "MCA" },
-                                ]}
-                              />
-                            </motion.div>
-
-                            <motion.div
-                              initial={{ opacity: 0, y: 12 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, height: 0 }}
-                            >
-                              <SelectField
-                                name="semester"
-                                value={form.semester}
-                                onChange={handleChange}
-                                placeholder="Select semester"
-                                options={[1, 2, 3, 4, 5, 6, 7, 8].map((s) => ({ value: s, label: `Semester ${s}` }))}
-                              />
-                            </motion.div>
-                          </>
-                        )}
-                      </AnimatePresence>
-
-                      <div className="md:col-span-2">
-                        <PasswordField
-                          icon={FaShieldAlt}
-                          placeholder="Create password"
-                          name="password"
-                          value={form.password}
+                        <TextField
+                          icon={FaEnvelope}
+                          type="email"
+                          placeholder="Email address"
+                          name="email"
+                          value={form.email}
                           onChange={handleChange}
                         />
-                      </div>
 
-                      <div className="md:col-span-2 space-y-4 pt-4">
-                        <ElegantButton type="submit" disabled={loading}>
-                          {loading ? (
+                        <AnimatePresence>
+                          {role === "student" && (
                             <>
-                              <span className="loading loading-spinner loading-xs" />
-                              Creating account
-                            </>
-                          ) : (
-                            <>
-                              <FaUserCheck className="text-[11px]" />
-                              Create account
+                              <motion.div
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, height: 0 }}
+                              >
+                                <TextField
+                                  placeholder="Registration number"
+                                  name="registrationNo"
+                                  value={form.registrationNo}
+                                  onChange={handleChange}
+                                />
+                              </motion.div>
+
+                              <motion.div
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, height: 0 }}
+                              >
+                                <TextField placeholder="Roll number" name="rollNo" value={form.rollNo} onChange={handleChange} />
+                              </motion.div>
+
+                              <motion.div
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, height: 0 }}
+                              >
+                                <SelectField
+                                  name="stream"
+                                  value={form.stream}
+                                  onChange={handleChange}
+                                  placeholder="Select stream"
+                                  options={[
+                                    { value: "BCA", label: "BCA" },
+                                    { value: "BBA", label: "BBA" },
+                                    { value: "MCA", label: "MCA" },
+                                  ]}
+                                />
+                              </motion.div>
+
+                              <motion.div
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, height: 0 }}
+                              >
+                                <SelectField
+                                  name="semester"
+                                  value={form.semester}
+                                  onChange={handleChange}
+                                  placeholder="Select semester"
+                                  options={[1, 2, 3, 4, 5, 6, 7, 8].map((s) => ({ value: s, label: `Semester ${s}` }))}
+                                />
+                              </motion.div>
                             </>
                           )}
-                        </ElegantButton>
+                        </AnimatePresence>
 
-                        <ElegantButton type="button" variant="outline" onClick={() => navigate("/login")}>
-                          Already have an account? Sign in
-                        </ElegantButton>
-                      </div>
-                    </form>
-                  </motion.div>
+                        <div className="sm:col-span-2">
+                          <PasswordField
+                            icon={FaShieldAlt}
+                            placeholder="Create password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2 space-y-4 pt-4">
+                          <ElegantButton type="submit" disabled={loading}>
+                            {loading ? (
+                              <>
+                                <span className="loading loading-spinner loading-xs" />
+                                Creating account
+                              </>
+                            ) : (
+                              <>
+                                <FaUserCheck className="text-[11px]" />
+                                Create account
+                              </>
+                            )}
+                          </ElegantButton>
+
+                          <ElegantButton type="button" variant="outline" onClick={() => navigate("/login")}>
+                            Already have an account? Sign in
+                          </ElegantButton>
+                        </div>
+                      </form>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </div>
 

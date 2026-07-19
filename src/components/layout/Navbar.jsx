@@ -91,7 +91,6 @@ const NAV_ITEMS = [
     items: [
       { to: "/previous-question", label: "Previous Year Question" },
       { to: "/syllabus", label: "Syllabus" },
-      { to: "/fees-payment", label: "Fees Payment" },
     ],
   },
 ];

@@ -15,6 +15,7 @@ import {
   FaSignOutAlt,
   FaClipboardCheck,
   FaArrowRight,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 
 import api from "../../services/api";
@@ -190,6 +191,8 @@ export default function StudentProfile() {
     );
   }
 
+  const phoneMissing = !student?.phone;
+
   return (
     <main className="min-h-screen bg-base-200">
       {/* TOP BAR — logout lives here, not in a card */}
@@ -217,6 +220,28 @@ export default function StudentProfile() {
       </header>
 
       <div className="mx-auto max-w-7xl space-y-8 p-4 md:p-6">
+        {/* PHONE NUMBER WARNING — fee payment requires a phone number on file */}
+        {phoneMissing && (
+          <div
+            role="alert"
+            className="alert alert-warning shadow-sm items-start sm:items-center"
+          >
+            <FaExclamationTriangle className="text-lg shrink-0" />
+            <span>
+              <strong>No phone number on file.</strong> Fees payment won't work
+              until you add one — Razorpay needs it to process your payment.
+            </span>
+            <button
+              type="button"
+              onClick={() => setEditMode(true)}
+              className="btn btn-sm btn-warning btn-outline ml-auto"
+            >
+              <FaEdit />
+              Add phone number
+            </button>
+          </div>
+        )}
+
         {/* PROFILE / ID CARD */}
         <div className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
           <div className="h-1.5 w-full" style={{ backgroundColor: ACCENT }} />
@@ -313,6 +338,7 @@ export default function StudentProfile() {
                     icon={<FaPhone />}
                     title="Phone"
                     value={student?.phone || "Not added"}
+                    warning={phoneMissing}
                   />
                   <InfoItem
                     icon={<FaMapMarkerAlt />}
@@ -367,6 +393,11 @@ export default function StudentProfile() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  hint={
+                    phoneMissing
+                      ? "Required for fees payment to work"
+                      : undefined
+                  }
                 />
 
                 <InputField
@@ -453,6 +484,19 @@ export default function StudentProfile() {
                 description="Access previous year university examination papers."
               />
             </Link>
+
+            <Link to="/student/fees-payment">
+              <ActionCard
+                icon={<FaFileAlt className="text-2xl" />}
+                title="Fees Payment"
+                description="Pay your Upcoming Fees , Exam Fees etc."
+                warning={
+                  phoneMissing
+                    ? "Add a phone number first — payment needs it"
+                    : undefined
+                }
+              />
+            </Link>
           </div>
         </section>
       </div>
@@ -460,23 +504,34 @@ export default function StudentProfile() {
   );
 }
 
-function InfoItem({ icon, title, value }) {
+function InfoItem({ icon, title, value, warning = false }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-lg text-base-content/40">{icon}</span>
+      <span className={`text-lg ${warning ? "text-warning" : "text-base-content/40"}`}>
+        {icon}
+      </span>
       <div>
         <div className="font-mono text-[11px] uppercase tracking-widest text-base-content/40">
           {title}
         </div>
-        <div className="wrap-break-word text-sm font-semibold text-base-content">
+        <div
+          className={`wrap-break-word text-sm font-semibold ${
+            warning ? "text-warning" : "text-base-content"
+          }`}
+        >
           {value}
+          {warning && (
+            <span className="ml-1 font-mono text-[10px] font-normal uppercase tracking-wide">
+              (required for payment)
+            </span>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function InputField({ label, name, value, onChange }) {
+function InputField({ label, name, value, onChange, hint }) {
   return (
     <div className="form-control">
       <label className="label">
@@ -490,19 +545,40 @@ function InputField({ label, name, value, onChange }) {
         name={name}
         value={value}
         onChange={onChange}
-        className="input input-bordered w-full"
+        className={`input input-bordered w-full ${
+          hint ? "input-warning" : ""
+        }`}
       />
+
+      {hint && (
+        <label className="label">
+          <span className="label-text-alt flex items-center gap-1 text-warning">
+            <FaExclamationTriangle className="text-[10px]" />
+            {hint}
+          </span>
+        </label>
+      )}
     </div>
   );
 }
 
-function ActionCard({ icon, title, description }) {
+function ActionCard({ icon, title, description, warning }) {
   return (
     <div className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      <div className="h-1 w-full" style={{ backgroundColor: ACCENT }} />
+      <div
+        className={`h-1 w-full ${warning ? "bg-warning" : ""}`}
+        style={warning ? undefined : { backgroundColor: ACCENT }}
+      />
 
       <div className="flex flex-1 flex-col p-5">
-        <div className="text-base-content/70">{icon}</div>
+        <div className="flex items-start justify-between">
+          <div className="text-base-content/70">{icon}</div>
+          {warning && (
+            <span className="tooltip tooltip-left" data-tip={warning}>
+              <FaExclamationTriangle className="text-warning" />
+            </span>
+          )}
+        </div>
 
         <h3 className="mt-4 text-lg font-bold tracking-tight text-base-content">
           {title}

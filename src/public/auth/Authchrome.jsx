@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   motion,
   useMotionValue,
   useTransform,
   useSpring,
+  useReducedMotion,
   AnimatePresence,
 } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -66,6 +67,9 @@ export function Fonts() {
         --radius-selector: 0rem;
         --border: 1px;
       }
+
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     `}</style>
   );
 }
@@ -83,6 +87,8 @@ const MOTES = Array.from({ length: 10 }, (_, i) => ({
 }));
 
 export function AmbientBackground() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <>
       <div
@@ -93,30 +99,152 @@ export function AmbientBackground() {
         }}
       />
       <motion.div
-        animate={{ opacity: [0.12, 0.26, 0.12], scale: [1, 1.06, 1] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduceMotion ? { opacity: 0.18 } : { opacity: [0.12, 0.26, 0.12], scale: [1, 1.06, 1] }}
+        transition={reduceMotion ? {} : { duration: 11, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-1/3 left-1/4 w-[28rem] h-[28rem] rounded-full blur-3xl bg-primary/10"
       />
-      {MOTES.map((m) => (
-        <motion.span
-          key={m.id}
-          className="absolute rounded-full bg-primary/55"
-          style={{
-            width: m.size,
-            height: m.size,
-            left: `${m.left}%`,
-            top: "100%",
-          }}
-          animate={{ top: ["100%", "-5%"], opacity: [0, 0.55, 0] }}
-          transition={{
-            duration: m.duration,
-            repeat: Infinity,
-            delay: m.delay,
-            ease: "linear",
-          }}
-        />
-      ))}
+      {!reduceMotion &&
+        MOTES.map((m) => (
+          <motion.span
+            key={m.id}
+            className="absolute rounded-full bg-primary/55"
+            style={{
+              width: m.size,
+              height: m.size,
+              left: `${m.left}%`,
+              top: "100%",
+            }}
+            animate={{ top: ["100%", "-5%"], opacity: [0, 0.55, 0] }}
+            transition={{
+              duration: m.duration,
+              repeat: Infinity,
+              delay: m.delay,
+              ease: "linear",
+            }}
+          />
+        ))}
     </>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/*  Mobile brand bar — the BrandPanel is desktop-only (lg:flex), so   */
+/*  phones and tablets get this compact wordmark instead of losing    */
+/*  the brand entirely                                                */
+/* ---------------------------------------------------------------- */
+export function MobileBrandBar({ title = "Techno College", subtitle = "HOOGHLY" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="lg:hidden flex items-center gap-3 mb-6"
+    >
+      <div className="w-11 h-11 rounded-full border border-primary/40 flex items-center justify-center shrink-0">
+        <span className="font-display text-xs tracking-[0.15em] text-primary">TCH</span>
+      </div>
+      <div>
+        <p className="font-display text-lg leading-tight text-base-content">{title}</p>
+        <p className="font-body text-[10px] uppercase tracking-[0.3em] text-primary/75">{subtitle}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/*  Toast — replaces native alert()/confirm() popups with an          */
+/*  in-chrome notification that matches the rest of the surface       */
+/* ---------------------------------------------------------------- */
+export function Toast({ toast, onClose, duration = 3200 }) {
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(onClose, duration);
+    return () => clearTimeout(t);
+  }, [toast, duration, onClose]);
+
+  return (
+    <div className="toast toast-top toast-center sm:toast-end z-50 px-4 sm:px-0">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -18, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.96 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className={`alert font-body text-sm shadow-xl border rounded max-w-sm ${
+              toast.type === "error"
+                ? "alert-error border-error/30"
+                : "alert-success border-success/30"
+            }`}
+          >
+            <span>{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/*  Success seal — the payoff moment after a completed flow           */
+/*  (password reset, registration): a ring draws in, then a check     */
+/*  stroke traces itself, echoing the Crest's construction             */
+/* ---------------------------------------------------------------- */
+export function SuccessSeal({ label = "Success", sublabel }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-5 py-8 text-center">
+      <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
+        <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full text-primary">
+          <motion.circle
+            cx="50"
+            cy="50"
+            r="46"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}
+          />
+        </svg>
+        <motion.svg
+          viewBox="0 0 24 24"
+          className="w-8 h-8 text-primary"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <motion.path
+            d="M5 13l4 4L19 7"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ delay: 0.55, duration: 0.5, ease: "easeOut" }}
+          />
+        </motion.svg>
+      </div>
+      <div>
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.95, duration: 0.4 }}
+          className="font-display text-xl text-base-content"
+        >
+          {label}
+        </motion.p>
+        {sublabel && (
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.4 }}
+            className="font-body text-xs mt-2 text-base-content/50"
+          >
+            {sublabel}
+          </motion.p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -284,14 +412,14 @@ export function CardShell({ children, shake = false }) {
 /* ---------------------------------------------------------------- */
 export function RoleTabs({ roles, active, onChange, layoutId }) {
   return (
-    <div role="tablist" className="tabs border-b border-base-content/10">
+    <div role="tablist" className="tabs border-b border-base-content/10 flex-nowrap overflow-x-auto scrollbar-hide">
       {roles.map((r) => (
         <button
           key={r.key}
           type="button"
           role="tab"
           onClick={() => onChange(r.key)}
-          className={`tab font-body relative h-auto pb-4 pt-1 !gap-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+          className={`tab font-body relative h-auto pb-4 pt-1 !gap-2 text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap shrink-0 transition-colors ${
             active === r.key ? "text-base-content" : "text-base-content/40"
           }`}
         >
@@ -441,11 +569,11 @@ export function SelectField({ name, value, onChange, options, placeholder }) {
           focused ? "border-primary/30" : "border-base-content/15"
         } ${value ? "text-base-content" : "text-base-content/40"}`}
       >
-        <option value="" className="text-base-100">
+        <option value="" className="bg-base-100 text-base-content/60">
           {placeholder}
         </option>
         {options.map((o) => (
-          <option key={o.value} value={o.value} className="text-base-100">
+          <option key={o.value} value={o.value} className="bg-base-100 text-base-content">
             {o.label}
           </option>
         ))}
@@ -517,7 +645,7 @@ export function AuthSteps({ current, labels }) {
 /* ---------------------------------------------------------------- */
 export function AuthFooter({ logo, name = "Techno College Hooghly", badge = "Version 2.0" }) {
   return (
-    <div className="px-10 py-6 flex items-center justify-between border-t border-base-content/10">
+    <div className="px-6 sm:px-10 py-5 sm:py-6 flex flex-wrap items-center justify-between gap-3 border-t border-base-content/10">
       <div className="flex items-center gap-3">
         <div className="avatar">
           <div className="w-8 h-8 rounded-full ring-1 ring-primary">

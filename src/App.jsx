@@ -149,6 +149,8 @@ import AdminProfile from "./public/profile/AdminProfile";
 import Sitemap from "./components/layout/Sitemap";
 import TermsAndConditions from "./components/common/Termsandcinditions";
 
+import PaymentAlerts from "./components/admin/admin_pages/student/PaymentAlerts"
+
 
 
 
@@ -425,10 +427,7 @@ export default function App() {
         />
 
         {/* student */}
-        <Route
-          path="/fees-payment"
-          element={<FeesPayment />}
-        />
+        
         <Route
           path="/previous-question"
           element={<PreviousQuestionPapers />}
@@ -479,6 +478,10 @@ export default function App() {
         path="attendance"
         element={<StudentAttendance />}
       />
+      <Route
+          path="fees-payment"
+          element={<FeesPayment />}
+        />
 
       </Route>
 
@@ -748,6 +751,12 @@ export default function App() {
         path="/admin/photo-control"
         element={
           <PhotoGalleryControl />
+        }
+      />
+      <Route
+        path="/admin/payment-alert"
+        element={
+          <PaymentAlerts />
         }
       />
 

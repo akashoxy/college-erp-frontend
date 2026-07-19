@@ -72,7 +72,6 @@ const FOOTER_SECTIONS = [
     links: [
       { to: "/previous-question", label: "Previous Year Question Papers" },
       { to: "/syllabus", label: "Syllabus" },
-      { to: "/fees-payment", label: "Fees Payment" },
     ],
   },
   {
